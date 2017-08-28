@@ -1,0 +1,44 @@
+{
+  "name": "lonamic",
+  "version": "0.0.0",
+  "description": "Dynamic HRBACL",
+  "main": "src/core.js",
+  "scripts": {
+    "lint": "eslint src && echo 'Lint complete.'",
+    "test": "node src/index.test.js",
+    "watch": "watch 'clear && npm run -s test && npm run lint' src",
+    "verify": "npm run -s test && npm run -s lint",
+    "precommit": "npm run verify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmiPhil/lonamic.git"
+  },
+  "keywords": [
+    "acl",
+    "rbac",
+    "hrbac",
+    "hrbacl",
+    "roles",
+    "role"
+  ],
+  "author": "EmiPhil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EmiPhil/lonamic/issues"
+  },
+  "homepage": "https://github.com/EmiPhil/lonamic#readme",
+  "devDependencies": {
+    "eslint": "^4.5.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "tape": "^4.8.0",
+    "watch": "^1.0.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}
