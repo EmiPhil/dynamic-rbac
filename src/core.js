@@ -4,8 +4,12 @@ const assign = require('lodash/assign')
 const cloneDeep = require('lodash/cloneDeep')
 const defaults = require('lodash/defaults')
 
+const {
+  inheritance
+} = require('./inheritance')
+
 // allow users to pass in options
-const acl = ({ options = '' } = {}) => {
+const acl = ({ hydrator = inheritance() } = {}) => {
   function lonamic (roles = {}, defs = {}, {
     rbacl = defaults(
       // clone deep to avoid tampering source objects
@@ -18,7 +22,7 @@ const acl = ({ options = '' } = {}) => {
     )
 
     // assign methods to lonamic
-    return Object.assign(add, {
+    return assign(add, {
       valueOf () {
         return rbacl
       },
@@ -33,6 +37,14 @@ const acl = ({ options = '' } = {}) => {
 
       role (x) {
         return rbacl[x]
+      },
+
+      get hydrator () {
+        return hydrator(rbacl)
+      },
+
+      hydrate (roleId) {
+        return hydrator(rbacl, roleId)
       },
 
       add,
