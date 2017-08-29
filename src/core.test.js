@@ -163,3 +163,46 @@ test('rbac(x).add(y)', assert => {
   assert.same(actual, expected, msg)
   assert.end()
 })
+
+test('rbac(x)(0)(false)(null)(undefined)', assert => {
+  const msg = 'should ignore adding falsy values'
+  const role = {
+    admin: { can: [1, 2, 3] }
+  }
+
+  const actual = lonamic(role)(0)(false)(null)(undefined).roles
+  const expected = role
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('rbac(x)(1)(true)("")', assert => {
+  const msg = 'should ignore adding invalid input values'
+  const role = {
+    admin: { can: [1, 2, 3] }
+  }
+
+  const actual = lonamic(role)(1)(true)('').roles
+  const expected = role
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('rbac(x).role(x.x)', assert => {
+  const msg = 'should retrieve role id x'
+  const roles = {
+    admin: {
+      can: [1, 2, 3]
+    },
+    manager: {
+      can: [4, 5, 6]
+    }
+  }
+  const actual = lonamic(roles).role('admin')
+  const expected = roles.admin
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
