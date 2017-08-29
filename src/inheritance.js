@@ -5,12 +5,15 @@ const mergeWith = require('lodash/mergeWith')
 const pick = require('lodash/pick')
 const without = require('lodash/without')
 
+// Used with mergeWith to concat arrays of same prop
+// See https://lodash.com/docs/4.17.4#mergeWith
 function customizer (obj, src) {
   if (Array.isArray(obj)) {
     return obj.concat(src)
   }
 }
 
+// keyword is used as the prop to find the next targets in hydration
 const inheritance = ({ keyword = 'inherits' } = {}) => {
   function hydrator (rbacl = {}, target = '', result = {
     incl: [],
@@ -18,7 +21,7 @@ const inheritance = ({ keyword = 'inherits' } = {}) => {
   }, cycles = 0, initTarget = target) {
     const replace = (target) => hydrator(rbacl, target)
 
-    if (rbacl[target] && !result.incl.includes(target)) {
+    if (target) {
       let res = mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
 
       const nextTarget = res[keyword].filter(role => !res.incl.includes(role))[0]
