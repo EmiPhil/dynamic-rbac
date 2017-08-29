@@ -31,6 +31,10 @@ const acl = ({ options = '' } = {}) => {
         return defs
       },
 
+      role (x) {
+        return rbacl[x]
+      },
+
       add,
       constructor: lonamic
     })
