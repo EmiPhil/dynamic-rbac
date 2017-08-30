@@ -21,6 +21,34 @@ const acl = ({ hydrator = inheritance() } = {}) => {
       assign({}, roles, newRoles), defs
     )
 
+    const can = (roleId = null, req = null, params = {}) => {
+      const role = lonamic.of(rbacl).hydrate(roleId).res
+      let canDo = {}
+      const handler = {
+        'string': function (perm) {
+          canDo[perm] = 1
+        },
+        'object': function (perm) {
+          canDo[perm.name] = perm.when
+        }
+      }
+      role.can.forEach(perm => handler[typeof perm](perm))
+
+      if (canDo[req]) {
+        if (canDo[req] === 1) {
+          return true
+        } else if (typeof canDo[req] === 'function') {
+          return canDo[req]({
+            params: assign({
+              roleId, canDo
+            }, params)
+          })
+        }
+      }
+
+      return false
+    }
+
     // assign methods to lonamic
     return assign(add, {
       valueOf () {
@@ -48,6 +76,7 @@ const acl = ({ hydrator = inheritance() } = {}) => {
       },
 
       add,
+      can,
       constructor: lonamic
     })
   }

@@ -1,4 +1,7 @@
 const test = require('tape')
+const _ = require('lodash')
+
+const uniqBy = arr => _.uniqBy(arr, item => item.name || item)
 
 const {
   lonamic
@@ -38,7 +41,7 @@ test('lonamic.hydrate(user.role)', assert => {
   const actual = lonamic(roles).hydrate(user.title).res
   const expected = {
     incl: ['Editor', 'Journalist'],
-    can: roles['Editor'].can.concat(roles['Journalist'].can)
+    can: uniqBy(roles['Editor'].can.concat(roles['Journalist'].can))
   }
 
   assert.same(actual, expected, msg)
@@ -46,10 +49,58 @@ test('lonamic.hydrate(user.role)', assert => {
 })
 
 test('lonamic.can(Journalist, edit:all)', assert => {
-  const msg = 'predicate should return false'
+  const msg = 'predicate should return true only for own posts'
 
   const user = users['00003']
-  const actual = lonamic(roles).can(user.title, 'edit:all')
+  const actual = _.compact(
+    _.range(100).map(id => lonamic(roles).can(user.title, 'post:edit', {
+      userId: '00003',
+      postId: id
+    }))
+  ).length
+  const expected = 100 / 4
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('lonamic.can(Editor, edit:all)', assert => {
+  const msg = 'predicate should return true for all posts'
+
+  const user = users['00002']
+  const actual = _.compact(
+    _.range(100).map(id => lonamic(roles).can(user.title, 'post:edit', {
+      postId: id
+    }))
+  ).length
+  const expected = 100
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('lonamic.can(Journalist, edit:own)', assert => {
+  const msg = 'predicate should return true'
+
+  const user = users['00004']
+  const actual = lonamic(roles).can(user.title, 'post:edit', {
+    userId: '00004',
+    postId: 0
+  })
+  const expected = true
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('lonamic.can(Journalist, edit:own)', assert => {
+  const msg = 'predicate should return false'
+
+  const user = users['00004']
+  const actual = lonamic(roles).can(user.title, 'post:edit', {
+    userId: '00004',
+    postId: 1
+  })
   const expected = false
 
   assert.same(actual, expected, msg)
