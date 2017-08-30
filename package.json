@@ -4,6 +4,7 @@
   "description": "Dynamic HRBACL",
   "main": "src/core.js",
   "scripts": {
+    "cov": "nyc report --reporter=lcov",
     "lint": "eslint src && echo 'Lint complete.'",
     "test": "nyc tape src/index.test.js",
     "watch": "watch 'clear && npm run -s test && npm run lint' src",

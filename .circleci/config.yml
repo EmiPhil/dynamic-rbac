@@ -18,7 +18,7 @@ jobs:
           command: npm test
       - run:
           name: code-coverage
-          command: './node_modules/.bin/nyc report --reporter=text-lcov'
+          command: npm run cov
       - run:
           name: ls-dir
           command: ls
