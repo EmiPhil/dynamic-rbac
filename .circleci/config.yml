@@ -1,6 +1,7 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/lonamic
     docker:
       - image: circleci/node:8.4.0
     branches:
