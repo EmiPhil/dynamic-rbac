@@ -1,14 +1,36 @@
+const posts = require('./posts')
+
+const ownsPost = (params = {}, override = '') => {
+  if (params.canDo[override]) return true
+  return posts[params.postId].by === params.userId
+}
+
 const roles = {
   Manager: {
-    can: ['view:all'],
+    can: ['post:view:all'],
     inherits: ['Journalist']
   },
   Editor: {
-    can: ['view:all', 'delete:all', 'edit:all', 'publish:all'],
+    can: ['post:view:all', 'post:delete:all', 'post:edit:all', 'post:publish'],
     inherits: ['Journalist']
   },
   Journalist: {
-    can: ['view:own', 'edit:own', 'delete:own', 'create']
+    can: [{
+      name: 'post:view',
+      when ({ params }) {
+        return ownsPost(params, 'post:view:all')
+      }
+    }, {
+      name: 'post:edit',
+      when ({ params }) {
+        return ownsPost(params, 'post:edit:all')
+      }
+    }, {
+      name: 'post:delete',
+      when ({ params }) {
+        return ownsPost(params, 'post:delete:all')
+      }
+    }, 'create']
   }
 }
 
