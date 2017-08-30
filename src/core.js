@@ -8,8 +8,13 @@ const {
   inheritance
 } = require('./inheritance')
 
+const can = require('./can')
+
 // allow users to pass in options
-const acl = ({ hydrator = inheritance() } = {}) => {
+function acl ({
+  hydrator = inheritance(),
+  handler = can
+} = {}) {
   function lonamic (roles = {}, defs = {}, {
     rbacl = defaults(
       // clone deep to avoid tampering source objects
@@ -45,6 +50,11 @@ const acl = ({ hydrator = inheritance() } = {}) => {
 
       hydrate (roleId) {
         return hydrator(rbacl, roleId)
+      },
+
+      can (id = null, ...rest) {
+        const role = lonamic.of(rbacl).hydrate(id).res
+        return handler({ role, id }, ...rest)
       },
 
       add,

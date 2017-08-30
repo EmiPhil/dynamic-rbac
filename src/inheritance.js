@@ -4,12 +4,16 @@ const assign = require('lodash/assign')
 const mergeWith = require('lodash/mergeWith')
 const pick = require('lodash/pick')
 const without = require('lodash/without')
+const uniqBy = require('lodash/uniqBy')
 
 // Used with mergeWith to concat arrays of same prop
 // See https://lodash.com/docs/4.17.4#mergeWith
 function customizer (obj, src) {
   if (Array.isArray(obj)) {
-    return obj.concat(src)
+    // only use the first appearance of a role
+    return uniqBy(obj.concat(src), (item) => {
+      return item.name || item
+    })
   }
 }
 
