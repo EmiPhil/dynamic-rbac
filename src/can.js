@@ -3,9 +3,14 @@ const assign = require('lodash/assign')
 function can ({
   role = {},
   roleId = ''
-} = {}, req, params) {
+} = {}, req = '', params = {}, next) {
   let canDo = {}
   let result = false
+
+  if (typeof params === 'function') {
+    next = params
+    params = {}
+  }
 
   const handler = {
     'string': function (perm) {
@@ -22,15 +27,15 @@ function can ({
     if (canDo[req] === 1) {
       result = true
     } else if (typeof canDo[req] === 'function') {
-      result = canDo[req]({
+      return canDo[req]({
         params: assign({
-          roleId, canDo
+          roleId, canDo, next
         }, params)
       })
     }
   }
 
-  return result
+  return next ? next(result) : result
 }
 
 module.exports = can

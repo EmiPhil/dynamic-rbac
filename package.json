@@ -4,8 +4,9 @@
   "description": "Dynamic HRBACL",
   "main": "src/core.js",
   "scripts": {
+    "cov": "nyc report --reporter=lcov",
     "lint": "eslint src && echo 'Lint complete.'",
-    "test": "node src/index.test.js",
+    "test": "nyc tape src/index.test.js",
     "watch": "watch 'clear && npm run -s test && npm run lint' src",
     "verify": "npm run -s test && npm run -s lint",
     "precommit": "npm run verify"
@@ -35,6 +36,7 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "nyc": "^11.1.0",
     "tape": "^4.8.0",
     "watch": "^1.0.2"
   },
