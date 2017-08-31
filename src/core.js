@@ -53,8 +53,38 @@ function acl ({
       },
 
       can (id = null, ...rest) {
-        const role = lonamic.of(rbacl).hydrate(id).res
+        const role = lonamic.hydrateOf(rbacl, id)
         return handler({ role, id }, ...rest)
+      },
+
+      async filter (id = null, reqs = [], then, keys = {
+        name: 'name',
+        rest: 'rest'
+      }) {
+        const currentACL = lonamic.of(rbacl)
+
+        if (typeof then === 'object') {
+          keys = then
+          then = undefined
+        }
+
+        async function filterRequests () {
+          let result = []
+          for (let i = 0; i < reqs.length; i++) {
+            let req = reqs[i]
+            let args = typeof req === 'string'
+              ? [req]
+              : [req[keys.name], ...req[keys.rest]]
+            let check = await currentACL.can(id, ...args)
+            if (check) {
+              result = result.concat([req])
+            }
+          }
+          return result
+        }
+
+        const result = await filterRequests()
+        return then ? then(result) : result
       },
 
       add,
@@ -67,6 +97,13 @@ function acl ({
       rbacl: cloneDeep(rbacl)
     }
   )
+
+  // sugar
+  lonamic.hydrateOf = (rbacl, id) => lonamic(
+    undefined, undefined, {
+      rbacl: cloneDeep(rbacl)
+    }
+  ).hydrate(id).res
 
   lonamic.default = (def = {}, rbacl = { roles: '', defaults: '' }) => lonamic(
     rbacl.roles,

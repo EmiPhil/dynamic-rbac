@@ -56,6 +56,8 @@ test('lonamic.can(Journalist, edit:all)', assert => {
     _.range(100).map(id => lonamic(roles).can(user.title, 'post:edit', {
       userId: '00003',
       postId: id
+    }).then(bool => {
+      console.log(bool)
     }))
   ).length
   const expected = 100 / 4

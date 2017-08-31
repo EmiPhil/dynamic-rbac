@@ -1,6 +1,6 @@
 const assign = require('lodash/assign')
 
-function can ({
+function filter ({
   role = {},
   roleId = ''
 } = {}, req = '', params = {}, next) {
@@ -27,26 +27,15 @@ function can ({
     if (canDo[req] === 1) {
       result = true
     } else if (typeof canDo[req] === 'function') {
-      return new Promise(async resolve => {
-        result = await canDo[req]({
-          params: assign({
-            roleId, canDo
-          }, params)
-        })
-        if (next) {
-          next(result)
-          return
-        }
-        resolve(result)
+      return canDo[req]({
+        params: assign({
+          roleId, canDo, next
+        }, params)
       })
     }
   }
 
-  if (next) {
-    next(result)
-    return
-  }
-  return result
+  return next ? next(result) : result
 }
 
-module.exports = can
+module.exports = filter
