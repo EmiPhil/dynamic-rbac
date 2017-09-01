@@ -48,17 +48,18 @@ test('lonamic.hydrate(user.role)', assert => {
   assert.end()
 })
 
-test('lonamic.can(Journalist, edit:all)', assert => {
+test('lonamic.can(Journalist, edit:all)', async assert => {
   const msg = 'predicate should return true only for own posts'
-
   const user = users['00003']
   const actual = _.compact(
-    _.range(100).map(id => lonamic(roles).can(user.title, 'post:edit', {
-      userId: '00003',
-      postId: id
-    }).then(bool => {
-      console.log(bool)
-    }))
+    await Promise.all(_.range(100)
+      .map(async id => lonamic(roles)
+        .can(user.title, 'post:edit', {
+          userId: '00003',
+          postId: id
+        })
+      )
+    )
   ).length
   const expected = 100 / 4
 
@@ -66,14 +67,18 @@ test('lonamic.can(Journalist, edit:all)', assert => {
   assert.end()
 })
 
-test('lonamic.can(Editor, edit:all)', assert => {
+test('lonamic.can(Editor, edit:all)', async assert => {
   const msg = 'predicate should return true for all posts'
 
   const user = users['00002']
   const actual = _.compact(
-    _.range(100).map(id => lonamic(roles).can(user.title, 'post:edit', {
-      postId: id
-    }))
+    await Promise.all(_.range(100)
+      .map(async id => lonamic(roles)
+        .can(user.title, 'post:edit', {
+          postId: id
+        })
+      )
+    )
   ).length
   const expected = 100
 
@@ -81,12 +86,12 @@ test('lonamic.can(Editor, edit:all)', assert => {
   assert.end()
 })
 
-test('lonamic.can(Journalist, edit:own)', assert => {
+test('lonamic.can(Journalist, edit:own)', async assert => {
   const msg = 'predicate should return true'
 
   const user = users['00004']
-  const actual = lonamic(roles).can(user.title, 'post:edit', {
-    userId: '00004',
+  const actual = await lonamic(roles).can(user.title, 'post:edit', {
+    userId: '00003',
     postId: 0
   })
   const expected = true
@@ -95,15 +100,58 @@ test('lonamic.can(Journalist, edit:own)', assert => {
   assert.end()
 })
 
-test('lonamic.can(Journalist, edit:own)', assert => {
+test('lonamic.can(Journalist, edit:own)', async assert => {
   const msg = 'predicate should return false'
 
   const user = users['00004']
-  const actual = lonamic(roles).can(user.title, 'post:edit', {
-    userId: '00004',
+  const actual = await lonamic(roles).can(user.title, 'post:edit', {
+    userId: '00003',
     postId: 1
   })
   const expected = false
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
+test('lonamic.filter(Journalist, posts)', async assert => {
+  const reqs = (userId) => _.range(100).map(id => ({
+    name: 'post:edit',
+    rest: [{
+      userId,
+      postId: id
+    }]
+  }))
+
+  const acl = lonamic(roles)
+  await Promise.all(
+    _.range(3, 6).map(async uid => {
+      const userId = '0000' + uid
+      const user = users[userId]
+      const canDo = await acl.filter(user.title, reqs(userId))
+      const actual = canDo.map(req => req.rest[0].postId)
+      const expected = _.range(uid - 3, 100, 4)
+
+      assert.same(actual, expected, `should filter editable posts (1 in 4 chance) - ${user.name} : ${userId}`)
+    })
+  )
+  assert.end()
+})
+
+test('lonamic.filter(Editor, posts)', async assert => {
+  const msg = 'should filter editable posts (all)'
+  const user = users['00002']
+  const reqs = _.range(100).map(id => ({
+    name: 'post:edit',
+    rest: [{
+      userId: '00002',
+      postId: id
+    }]
+  }))
+
+  const canDo = await lonamic(roles).filter(user.title, reqs)
+  const actual = canDo.map(req => req.rest[0].postId)
+  const expected = _.range(100)
 
   assert.same(actual, expected, msg)
   assert.end()

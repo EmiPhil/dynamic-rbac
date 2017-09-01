@@ -46,10 +46,10 @@ test('lonamic(simpleRoles).filter(id, reqs)', assert => {
   const msg = 'should return all reqs (cb)'
   const reqs = ['delete', 'write']
 
-  lonamic(simpleRoles).filter('2', reqs, res => {
-    const actual = res
+  lonamic(simpleRoles).filter('2', reqs, (err, res) => {
+    if (err) res = err
     const expected = reqs
-    assert.same(actual, expected, msg)
+    assert.same(res, expected, msg)
     assert.end()
   })
 })
@@ -91,12 +91,10 @@ const advancedRoles = {
   '1': {
     can: [{
       name: 'edit',
-      when ({ params }) {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(params.by === params.uId)
-          }, 150)
-        })
+      when ({ params }, next) {
+        setTimeout(() => {
+          next(null, params.by === params.uId)
+        }, 150)
       }
     }]
   },

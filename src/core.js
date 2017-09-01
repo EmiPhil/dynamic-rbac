@@ -9,11 +9,13 @@ const {
 } = require('./inheritance')
 
 const can = require('./can')
+const { filter } = require('./filter')
 
 // allow users to pass in options
 function acl ({
   hydrator = inheritance(),
-  handler = can
+  canHandler = can,
+  filterHandler = filter
 } = {}) {
   function lonamic (roles = {}, defs = {}, {
     rbacl = defaults(
@@ -54,37 +56,12 @@ function acl ({
 
       can (id = null, ...rest) {
         const role = lonamic.hydrateOf(rbacl, id)
-        return handler({ role, id }, ...rest)
+        return canHandler({ role, id }, ...rest)
       },
 
-      async filter (id = null, reqs = [], then, keys = {
-        name: 'name',
-        rest: 'rest'
-      }) {
+      filter (id = null, ...rest) {
         const currentACL = lonamic.of(rbacl)
-
-        if (typeof then === 'object') {
-          keys = then
-          then = undefined
-        }
-
-        async function filterRequests () {
-          let result = []
-          for (let i = 0; i < reqs.length; i++) {
-            let req = reqs[i]
-            let args = typeof req === 'string'
-              ? [req]
-              : [req[keys.name], ...req[keys.rest]]
-            let check = await currentACL.can(id, ...args)
-            if (check) {
-              result = result.concat([req])
-            }
-          }
-          return result
-        }
-
-        const result = await filterRequests()
-        return then ? then(result) : result
+        return filterHandler({ acl: currentACL, id }, ...rest)
       },
 
       add,
