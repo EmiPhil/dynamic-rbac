@@ -19,6 +19,15 @@ const simpleRoles = {
   }
 }
 
+test('lonamic(simpleRoles).filter()', async assert => {
+  const msg = 'should return empty array'
+  const actual = await lonamic(simpleRoles).filter()
+  const expected = []
+
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
 test('lonamic(simpleRoles).filter(id, reqs)', async assert => {
   const msg = 'should return all reqs'
   const reqs = ['delete', 'write']

@@ -41,7 +41,6 @@ const roles = {
     can: [{
       name: 'e',
       when ({ params }, next) {
-        console.log('!!!', params)
         setTimeout(() => {
           next(params.err)
         }, 200)
@@ -174,23 +173,27 @@ test('filter(x) returns errs', async assert => {
   const msg = 'should filter array'
   const params = { id: '5', acl }
   const reqs = [{
-    target: 'e',
-    args: [{
+    name: 'e',
+    rest: [{
       err: 'Failed!'
     }]
   }]
   const expected = 'Failed!'
-  /*
+
   filter(params, reqs, (err, res) => {
-    console.log('...', err, res)
     if (err) res = err
     assert.same(res, expected, 'cb: ' + msg)
-  }) */
-  filter(params, reqs).catch(res => {
-    assert.same(res, expected, 'promise: ' + msg)
   })
-  const actual = await filter(params, reqs)
-  assert.same(actual, expected, 'async: ' + msg)
+
+  filter(params, reqs).catch(err => {
+    assert.same(err, expected, 'promise: ' + msg)
+  })
+
+  try {
+    await filter(params, reqs)
+  } catch (err) {
+    assert.same(err, expected, 'async: ' + msg)
+  }
 
   assert.end()
 })

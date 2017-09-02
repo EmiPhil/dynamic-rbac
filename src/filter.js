@@ -1,7 +1,7 @@
 function filterRequests ({
   id = '',
   reqs = [],
-  keys = {},
+  keys = { name: '', rest: [] },
   acl = {}
 } = {}) {
   return new Promise(async (resolve, reject) => {
@@ -17,7 +17,6 @@ function filterRequests ({
           result = result.concat([req])
         }
       } catch (err) {
-        console.log(err)
         return reject(err)
       }
     }
@@ -52,10 +51,7 @@ async function filter ({
     // if cb return to cb
     return then ? then(null, result) : result
   } catch (err) {
-    console.log('!!!:', err)
-    if (then) {
-      return then(err)
-    }
+    if (then) { return then(err) }
     throw (err)
   }
 }

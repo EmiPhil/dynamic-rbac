@@ -5,6 +5,8 @@ function can ({
   roleId = ''
 } = {}, req = '', params = {}, next) {
   let canDo = {}
+  // assigns an empty array if role.can is undefined
+  role = assign({ can: [] }, role)
   // support 3 arguments if no params
   if (typeof params === 'function') {
     next = params
@@ -29,14 +31,12 @@ function can ({
   // always return a promise
   // this will create a performance hit for async apps,
   // but prevents hard to find errors in case of sync
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     // support cb
     function done (err, ...args) {
-      if (err) {
-        console.log('!!!!!!!!!!!!', err)
-        return next ? next(err) : reject(err)
-      }
-      return next ? next(null, ...args) : resolve(...args)
+      return err
+        ? next ? next(err) : reject(err)
+        : next ? next(null, ...args) : resolve(...args)
     }
 
     // check that the req is even in the canDo obj
@@ -46,26 +46,23 @@ function can ({
         return done(null, true)
       } else if (typeof canDo[req] === 'function') {
         // if the req is a function, try to call the .when method
-        // pass Promise params into the .when for sync resolution
-        return new Promise((resolve, reject) => {
-          canDo[req]({
-            params: assign({
-              roleId, // for reference
-              canDo // for reference
-            }, params) // these params are from the user
-          }, function (err, res) {
-            if (err) {
-              console.log('Error!', err)
-              return done(err)
-            }
-            resolve(res)
-          })
-        })
-          .then((res) => done(null, res))
-          .catch((err) => {
-            console.log(err)
-            done(err)
-          })
+        try {
+          // pass Promise params into the .when for sync resolution
+          const result = await new Promise((resolve, reject) =>
+            canDo[req]({
+              // give reference params + user defined params
+              params: assign({ roleId, canDo }, params)
+            }, function (err, res) { // simple cb to promise
+              if (err) return reject(err)
+              return resolve(res)
+            })
+          )
+          // if there was no error, return the resolved value
+          return done(null, result)
+        } catch (err) {
+          // user function hit reject, pass the err back
+          return done(err)
+        }
       }
     }
     // canDo[req] does not exist, so access denied
