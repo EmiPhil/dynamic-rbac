@@ -3,6 +3,15 @@ const test = require('tape')
 
 const can = require('./can')
 
+test('can()', assert => {
+  const msg = 'should return false'
+  can().then(result => {
+    const expected = false
+    assert.same(result, expected, msg)
+    assert.end()
+  })
+})
+
 const roles = {
   '1': {
     can: ['a']
@@ -32,7 +41,17 @@ const roles = {
       when ({ params }, next) {
         setTimeout(() => {
           next(null, params.userRole === '5')
-        }, 500)
+        }, 100)
+      }
+    }]
+  },
+  '6': {
+    can: [{
+      name: 'f',
+      when ({ params }, next) {
+        setTimeout(() => {
+          next(params.fail)
+        }, 100)
       }
     }]
   }
@@ -217,4 +236,67 @@ test('can(x) when cb', assert => {
     assert.same(res, expected, msg)
     assert.end()
   })
+})
+
+test('can(x) fail', async assert => {
+  const msg = 'receives failure message'
+  const expected = 'Failed!'
+  can({
+    role: roles[6],
+    roleId: '6'
+  }, 'f', {
+    fail: 'Failed!'
+  }, (err) => {
+    assert.same(err, expected, 'cb: ' + msg)
+  })
+
+  can({
+    role: roles[6],
+    roleId: '6'
+  }, 'f', {
+    fail: 'Failed!'
+  }).catch(err => {
+    assert.same(err, expected, 'promise: ' + msg)
+  })
+  try {
+    await can({
+      role: roles[6],
+      roleId: '6'
+    }, 'f', {
+      fail: 'Failed!'
+    })
+  } catch (err) {
+    assert.same(err, expected, 'async: ' + msg)
+  }
+  assert.end()
+})
+
+test('can(x) fail', async assert => {
+  const msg = 'receives failure message'
+  const expected = 'invalid input: .when is not a func'
+  const role = {
+    can: [{
+      name: '',
+      when: 'invalid'
+    }]
+  }
+  can({
+    role
+  }, (err) => {
+    assert.same(err, expected, 'cb: ' + msg)
+  })
+
+  can({
+    role
+  }).catch(err => {
+    assert.same(err, expected, 'promise: ' + msg)
+  })
+  try {
+    await can({
+      role
+    })
+  } catch (err) {
+    assert.same(err, expected, 'async: ' + msg)
+  }
+  assert.end()
 })
