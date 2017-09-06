@@ -3,6 +3,15 @@ const test = require('tape')
 
 const can = require('./can')
 
+test('can()', assert => {
+  const msg = 'should return false'
+  can().then(result => {
+    const expected = false
+    assert.same(result, expected, msg)
+    assert.end()
+  })
+})
+
 const roles = {
   '1': {
     can: ['a']
@@ -13,54 +22,70 @@ const roles = {
   '3': {
     can: [{
       name: 'c',
-      when ({ params }) {
-        const res = params.userRole === '3'
-        return params.next
-          ? params.next(res)
-          : res
+      when ({ params }, next) {
+        next(null, params.userRole === '3')
       }
     }]
   },
   '4': {
     can: [{
       name: 'd',
-      when ({ params }) {
-        const res = params.roleId === '4'
-        return params.next
-          ? params.next(res)
-          : res
+      when ({ params }, next) {
+        next(null, params.roleId === '4')
       }
     }]
   },
   '5': {
     can: [{
       name: 'e',
-      when ({ params }) {
+      when ({ params }, next) {
         setTimeout(() => {
-          params.next(params.userRole === '5')
-        }, 500)
+          next(null, params.userRole === '5')
+        }, 100)
+      }
+    }]
+  },
+  '6': {
+    can: [{
+      name: 'f',
+      when ({ params }, next) {
+        setTimeout(() => {
+          next(params.fail)
+        }, 100)
       }
     }]
   }
 }
 
 test('can(x)', assert => {
-  const msg = 'predicate should return true'
-
-  const actual = can({
+  const msg = 'promise: predicate should return true'
+  can({
     role: roles[1],
     roleId: '1'
-  }, 'a')
-  const expected = true
-
-  assert.same(actual, expected, msg)
-  assert.end()
+  }, 'a').then(result => {
+    const expected = true
+    assert.same(result, expected, msg)
+    assert.end()
+  })
 })
 
 test('can(x)', assert => {
-  const msg = 'predicate should return false'
+  const msg = 'cb: predicate should return false'
+  can({
+    role: roles[1],
+    roleId: '1'
+  }, 'b', (err, res) => {
+    if (err) res = err
+    const expected = false
+    assert.same(res, expected, msg)
+    assert.end()
+  })
+})
 
-  const actual = can({
+test('can(x)', async assert => {
+  const msg = 'async: predicate should return false'
+
+  const actual = await can({
     role: roles[1],
     roleId: '1'
   }, 'b')
@@ -70,10 +95,10 @@ test('can(x)', assert => {
   assert.end()
 })
 
-test('can(x) when', assert => {
-  const msg = 'predicate should return false'
+test('can(x) when', async assert => {
+  const msg = 'async pattern: predicate should return false'
 
-  const actual = can({
+  const actual = await can({
     role: roles[3],
     roleId: '3'
   }, 'c')
@@ -84,37 +109,36 @@ test('can(x) when', assert => {
 })
 
 test('can(x) when', assert => {
-  const msg = 'predicate should return true'
-
-  const actual = can({
+  const msg = 'cb pattern: predicate should return true'
+  can({
     role: roles[3],
     roleId: '3'
   }, 'c', {
     userRole: '3'
+  }, (err, res) => {
+    if (err) res = err
+    const expected = true
+    assert.same(res, expected, msg)
+    assert.end()
   })
-  const expected = true
-
-  assert.same(actual, expected, msg)
-  assert.end()
 })
 
 test('can(x) when', assert => {
-  const msg = 'predicate should return false'
-
-  const actual = can({
+  const msg = 'promise pattern: predicate should return false'
+  can({
     role: roles[4],
     roleId: '3'
-  }, 'd')
-  const expected = false
-
-  assert.same(actual, expected, msg)
-  assert.end()
+  }, 'd').then((result) => {
+    const expected = false
+    assert.same(result, expected, msg)
+    assert.end()
+  })
 })
 
-test('can(x) when', assert => {
+test('can(x) when', async assert => {
   const msg = 'predicate should return true'
 
-  const actual = can({
+  const actual = await can({
     role: roles[4],
     roleId: '4'
   }, 'd')
@@ -122,42 +146,6 @@ test('can(x) when', assert => {
 
   assert.same(actual, expected, msg)
   assert.end()
-})
-
-test('can(x) when param cb', assert => {
-  const msg = 'predicate should return false'
-
-  can({
-    role: roles[5],
-    roleId: '5'
-  }, 'e', {
-    userRole: '4',
-    next (res) {
-      const actual = res
-      const expected = false
-
-      assert.same(actual, expected, msg)
-      assert.end()
-    }
-  })
-})
-
-test('can(x) when param cb', assert => {
-  const msg = 'predicate should return true'
-
-  can({
-    role: roles[5],
-    roleId: '5'
-  }, 'e', {
-    userRole: '5',
-    next (res) {
-      const actual = res
-      const expected = true
-
-      assert.same(actual, expected, msg)
-      assert.end()
-    }
-  })
 })
 
 test('can(x) when cb', assert => {
@@ -168,11 +156,10 @@ test('can(x) when cb', assert => {
     roleId: '5'
   }, 'e', {
     userRole: '4'
-  }, (res) => {
-    const actual = res
+  }, (err, res) => {
+    if (err) res = err
     const expected = false
-
-    assert.same(actual, expected, msg)
+    assert.same(res, expected, msg)
     assert.end()
   })
 })
@@ -185,11 +172,10 @@ test('can(x) when cb', assert => {
     roleId: '5'
   }, 'e', {
     userRole: '5'
-  }, (res) => {
-    const actual = res
+  }, (err, res) => {
+    if (err) res = err
     const expected = true
-
-    assert.same(actual, expected, msg)
+    assert.same(res, expected, msg)
     assert.end()
   })
 })
@@ -202,11 +188,10 @@ test('can(x) when cb', assert => {
     roleId: '3'
   }, 'c', {
     userRole: '2'
-  }, (res) => {
-    const actual = res
+  }, (err, res) => {
+    if (err) res = err
     const expected = false
-
-    assert.same(actual, expected, msg)
+    assert.same(res, expected, msg)
     assert.end()
   })
 })
@@ -219,41 +204,99 @@ test('can(x) when cb', assert => {
     roleId: '3'
   }, 'c', {
     userRole: '3'
-  }, (res) => {
-    const actual = res
+  }, (err, res) => {
+    if (err) res = err
     const expected = true
-
-    assert.same(actual, expected, msg)
-    assert.end()
-  })
-})
-
-test('can(x) when cb', assert => {
-  const msg = 'predicate should return false'
-
-  can({
-    role: roles[1],
-    roleId: '1'
-  }, 'a', (res) => {
-    const actual = res
-    const expected = true
-
-    assert.same(actual, expected, msg)
+    assert.same(res, expected, msg)
     assert.end()
   })
 })
 
 test('can(x) when cb', assert => {
   const msg = 'predicate should return true'
-
   can({
     role: roles[1],
     roleId: '1'
-  }, 'b', (res) => {
-    const actual = res
-    const expected = false
-
-    assert.same(actual, expected, msg)
+  }, 'a', (err, res) => {
+    if (err) res = err
+    const expected = true
+    assert.same(res, expected, msg)
     assert.end()
   })
+})
+
+test('can(x) when cb', assert => {
+  const msg = 'predicate should return false'
+  can({
+    role: roles[1],
+    roleId: '1'
+  }, 'b', (err, res) => {
+    if (err) res = err
+    const expected = false
+    assert.same(res, expected, msg)
+    assert.end()
+  })
+})
+
+test('can(x) fail', async assert => {
+  const msg = 'receives failure message'
+  const expected = 'Failed!'
+  can({
+    role: roles[6],
+    roleId: '6'
+  }, 'f', {
+    fail: 'Failed!'
+  }, (err) => {
+    assert.same(err, expected, 'cb: ' + msg)
+  })
+
+  can({
+    role: roles[6],
+    roleId: '6'
+  }, 'f', {
+    fail: 'Failed!'
+  }).catch(err => {
+    assert.same(err, expected, 'promise: ' + msg)
+  })
+  try {
+    await can({
+      role: roles[6],
+      roleId: '6'
+    }, 'f', {
+      fail: 'Failed!'
+    })
+  } catch (err) {
+    assert.same(err, expected, 'async: ' + msg)
+  }
+  assert.end()
+})
+
+test('can(x) fail', async assert => {
+  const msg = 'receives failure message'
+  const expected = 'invalid input: .when is not a func'
+  const role = {
+    can: [{
+      name: '',
+      when: 'invalid'
+    }]
+  }
+  can({
+    role
+  }, (err) => {
+    assert.same(err, expected, 'cb: ' + msg)
+  })
+
+  can({
+    role
+  }).catch(err => {
+    assert.same(err, expected, 'promise: ' + msg)
+  })
+  try {
+    await can({
+      role
+    })
+  } catch (err) {
+    assert.same(err, expected, 'async: ' + msg)
+  }
+  assert.end()
 })

@@ -73,6 +73,14 @@ test('rbac(x).roles', assert => {
   assert.end()
 })
 
+test('rbac.default()', assert => {
+  const msg = 'should return empty array'
+  const actual = lonamic.default().valueOf()
+  const expected = []
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
 test('rbac.default(x)(x)', assert => {
   const msg = 'should not overwrite default role of same id'
   const roles = [{
