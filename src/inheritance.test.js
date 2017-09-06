@@ -10,6 +10,14 @@ const {
   hydrator
 } = require('./inheritance')
 
+test('hydrator()', assert => {
+  const msg = 'should return an empty array'
+  const actual = hydrator().valueOf()
+  const expected = { incl: [] }
+  assert.same(actual, expected, msg)
+  assert.end()
+})
+
 test('hydrator(x)', assert => {
   const msg = 'should find all inheritance'
   const roles = [{

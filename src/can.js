@@ -63,6 +63,9 @@ function can ({
           // user function hit reject, pass the err back
           return done(err)
         }
+      } else {
+        // .when is not a function
+        return done('invalid input: .when is not a func')
       }
     }
     // canDo[req] does not exist, so access denied
