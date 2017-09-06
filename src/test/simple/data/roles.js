@@ -1,8 +1,10 @@
 const posts = require('./posts')
 
-const ownsPost = (params = {}, override = '') => {
-  if (params.canDo[override]) return true
-  return posts[params.postId].by === params.userId
+const ownsPost = (params = {}, override = '', next) => {
+  if (params.canDo[override]) return next(null, true)
+  return next(
+    null, posts[params.postId].by === params.userId
+  )
 }
 
 const roles = {
@@ -17,18 +19,18 @@ const roles = {
   Journalist: {
     can: [{
       name: 'post:view',
-      when ({ params }) {
-        return ownsPost(params, 'post:view:all')
+      when ({ params }, next) {
+        return ownsPost(params, 'post:view:all', next)
       }
     }, {
       name: 'post:edit',
-      when ({ params }) {
-        return ownsPost(params, 'post:edit:all')
+      when ({ params }, next) {
+        return ownsPost(params, 'post:edit:all', next)
       }
     }, {
       name: 'post:delete',
-      when ({ params }) {
-        return ownsPost(params, 'post:delete:all')
+      when ({ params }, next) {
+        return ownsPost(params, 'post:delete:all', next)
       }
     }, 'create']
   }

@@ -9,11 +9,13 @@ const {
 } = require('./inheritance')
 
 const can = require('./can')
+const { filter } = require('./filter')
 
 // allow users to pass in options
 function acl ({
   hydrator = inheritance(),
-  handler = can
+  canHandler = can,
+  filterHandler = filter
 } = {}) {
   function lonamic (roles = {}, defs = {}, {
     rbacl = defaults(
@@ -53,8 +55,13 @@ function acl ({
       },
 
       can (id = null, ...rest) {
-        const role = lonamic.of(rbacl).hydrate(id).res
-        return handler({ role, id }, ...rest)
+        const role = lonamic.hydrateOf(rbacl, id)
+        return canHandler({ role, id }, ...rest)
+      },
+
+      filter (id = null, ...rest) {
+        const currentACL = lonamic.of(rbacl)
+        return filterHandler({ acl: currentACL, id }, ...rest)
       },
 
       add,
@@ -67,6 +74,13 @@ function acl ({
       rbacl: cloneDeep(rbacl)
     }
   )
+
+  // sugar
+  lonamic.hydrateOf = (rbacl, id) => lonamic(
+    undefined, undefined, {
+      rbacl: cloneDeep(rbacl)
+    }
+  ).hydrate(id).res
 
   lonamic.default = (def = {}, rbacl = { roles: '', defaults: '' }) => lonamic(
     rbacl.roles,
