@@ -1,4 +1,4 @@
-const assign = require('lodash/assign')
+import { assign } from 'lodash'
 
 function can ({
   role = {},
@@ -73,4 +73,4 @@ function can ({
   })
 }
 
-module.exports = can
+export default can

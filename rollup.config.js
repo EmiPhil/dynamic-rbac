@@ -3,10 +3,12 @@ var babel = require('rollup-plugin-babel')
 var uglify = require('rollup-plugin-uglify')
 
 var config = {
+  input: 'src/core.js',
   output: {
-    format: 'umd'
+    file: 'dist/lonamic.js',
+    format: 'umd',
+    name: 'lonamic'
   },
-  name: 'lonamic',
   plugins: [
     nodeResolve({
       jsnext: true

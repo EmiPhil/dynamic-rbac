@@ -1,4 +1,4 @@
-function filterRequests ({
+export function filterRequests ({
   id = '',
   reqs = [],
   keys = { name: '', rest: [] },
@@ -56,6 +56,4 @@ async function filter ({
   }
 }
 
-module.exports = {
-  filter, filterRequests
-}
+export default filter

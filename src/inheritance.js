@@ -1,10 +1,10 @@
-const util = require('util')
-
-const assign = require('lodash/assign')
-const mergeWith = require('lodash/mergeWith')
-const pick = require('lodash/pick')
-const without = require('lodash/without')
-const uniqBy = require('lodash/uniqBy')
+import {
+  assign,
+  mergeWith,
+  pick,
+  without,
+  uniqBy
+} from 'lodash'
 
 // Used with mergeWith to concat arrays of same prop
 // See https://lodash.com/docs/4.17.4#mergeWith
@@ -18,7 +18,7 @@ function customizer (obj, src) {
 }
 
 // keyword is used as the prop to find the next targets in hydration
-const inheritance = ({ keyword = 'inherits' } = {}) => {
+export const inheritance = ({ keyword = 'inherits' } = {}) => {
   function hydrator (rbacl = {}, target = '', result = {
     incl: [],
     [keyword]: []
@@ -44,7 +44,7 @@ const inheritance = ({ keyword = 'inherits' } = {}) => {
         },
 
         toString () {
-          return `rbacl[${initTarget}] => ${util.inspect(result)}`
+          return `rbacl[${initTarget}] => ${JSON.stringify(result)}`
         },
 
         get res () {
@@ -75,7 +75,4 @@ const inheritance = ({ keyword = 'inherits' } = {}) => {
 }
 
 const hydrator = inheritance()
-
-module.exports = {
-  inheritance, hydrator
-}
+export default hydrator

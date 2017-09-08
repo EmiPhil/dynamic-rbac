@@ -1,19 +1,18 @@
 'use strict'
 
-const assign = require('lodash/assign')
-const cloneDeep = require('lodash/cloneDeep')
-const defaults = require('lodash/defaults')
+import {
+  assign,
+  cloneDeep,
+  defaults
+} from 'lodash'
 
-const {
-  inheritance
-} = require('./inheritance')
-
-const can = require('./can')
-const { filter } = require('./filter')
+import inheritance from './inheritance'
+import can from './can'
+import filter from './filter'
 
 // allow users to pass in options
-function acl ({
-  hydrator = inheritance(),
+export function acl ({
+  hydrator = inheritance,
   canHandler = can,
   filterHandler = filter
 } = {}) {
@@ -91,7 +90,4 @@ function acl ({
 }
 
 const lonamic = acl()
-
-module.exports = {
-  acl, lonamic
-}
+export default lonamic
