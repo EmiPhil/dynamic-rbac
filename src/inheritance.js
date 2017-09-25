@@ -68,5 +68,5 @@ export const inheritance = ({ keyword = 'inherits' } = {}) => {
   return hydrator
 }
 
-const hydrator = inheritance()
+export const hydrator = inheritance()
 export default hydrator

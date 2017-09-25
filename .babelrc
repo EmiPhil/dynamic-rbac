@@ -1,0 +1,26 @@
+{
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ],
+      "presets": [
+        "env"
+      ]
+    },
+    "build": {
+      "plugins": [
+        "lodash",
+        "external-helpers"
+      ],
+      "presets": [
+        ["env", {
+          "targets": {
+            "browsers": ["last 2 versions", "safari >= 7"]
+          },
+        "modules": false
+        }]
+      ]
+    }
+  }
+}

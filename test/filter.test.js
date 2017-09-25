@@ -2,12 +2,12 @@ const test = require('tape')
 
 const {
   lonamic
-} = require('./core')
+} = require('../src/core')
 
 const {
   filter,
   filterRequests
-} = require('./filter')
+} = require('../src/filter')
 
 const roles = {
   '1': {

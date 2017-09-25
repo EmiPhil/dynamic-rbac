@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-function can ({
+export function can ({
   role = {},
   roleId = ''
 } = {}, req = '', params = {}, next) {

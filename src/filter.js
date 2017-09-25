@@ -30,7 +30,7 @@ export function filterRequests ({
 // keys map the id object:
 //   name refers to the id string
 //   rest refers to the args to pass to .can(id, ...rest)
-async function filter ({
+export async function filter ({
   id = '',
   acl = {}
 } = {}, reqs = [], then, keys = {

@@ -3,11 +3,11 @@ const test = require('tape')
 
 const {
   acl, lonamic
-} = require('./core')
+} = require('../src/core')
 
 const {
   inheritance
-} = require('./inheritance')
+} = require('../src/inheritance')
 
 test('rbac(role).hydrate(x)', assert => {
   const msg = 'should return the hydrated role'

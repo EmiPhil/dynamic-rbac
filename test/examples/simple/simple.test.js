@@ -5,7 +5,7 @@ const uniqBy = arr => _.uniqBy(arr, item => item.name || item)
 
 const {
   lonamic
-} = require('../../core')
+} = require('../../../src/core')
 const { posts, users, roles } = require('./data')
 
 test('test data should load', assert => {
