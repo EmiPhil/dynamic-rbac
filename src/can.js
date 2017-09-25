@@ -1,4 +1,4 @@
-import { assign } from 'lodash'
+import _ from 'lodash'
 
 function can ({
   role = {},
@@ -6,7 +6,7 @@ function can ({
 } = {}, req = '', params = {}, next) {
   let canDo = {}
   // assigns an empty array if role.can is undefined
-  role = assign({ can: [] }, role)
+  role = _.assign({ can: [] }, role)
   // support 3 arguments if no params
   if (typeof params === 'function') {
     next = params
@@ -51,7 +51,7 @@ function can ({
           const result = await new Promise((resolve, reject) =>
             canDo[req]({
               // give reference params + user defined params
-              params: assign({ roleId, canDo }, params)
+              params: _.assign({ roleId, canDo }, params)
             }, function (err, res) { // simple cb to promise
               if (err) return reject(err)
               return resolve(res)

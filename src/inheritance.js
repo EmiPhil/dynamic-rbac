@@ -1,17 +1,11 @@
-import {
-  assign,
-  mergeWith,
-  pick,
-  without,
-  uniqBy
-} from 'lodash'
+import _ from 'lodash'
 
 // Used with mergeWith to concat arrays of same prop
 // See https://lodash.com/docs/4.17.4#mergeWith
 function customizer (obj, src) {
   if (Array.isArray(obj)) {
     // only use the first appearance of a role
-    return uniqBy(obj.concat(src), (item) => {
+    return _.uniqBy(obj.concat(src), (item) => {
       return item.name || item
     })
   }
@@ -26,19 +20,19 @@ export const inheritance = ({ keyword = 'inherits' } = {}) => {
     const replace = (target) => hydrator(rbacl, target)
 
     if (target) {
-      let res = mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
+      let res = _.mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
 
       const nextTarget = res[keyword].filter(role => !res.incl.includes(role))[0]
 
-      res = assign({}, res, {
-        [keyword]: without(res[keyword], nextTarget)
+      res = _.assign({}, res, {
+        [keyword]: _.without(res[keyword], nextTarget)
       })
 
       return hydrator(rbacl, nextTarget, res, cycles + 1, initTarget)
     } else {
-      result = pick(result, ['incl', 'can'])
+      result = _.pick(result, ['incl', 'can'])
 
-      return assign(replace, {
+      return _.assign(replace, {
         valueOf () {
           return result
         },

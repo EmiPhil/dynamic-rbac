@@ -1,10 +1,8 @@
 'use strict'
 
-import {
-  assign,
-  cloneDeep,
-  defaults
-} from 'lodash'
+// we use a babel transform plugin to automatically cherry pick functions
+// https://github.com/lodash/babel-plugin-lodash
+import _ from 'lodash'
 
 import inheritance from './inheritance'
 import can from './can'
@@ -17,18 +15,18 @@ export function acl ({
   filterHandler = filter
 } = {}) {
   function lonamic (roles = {}, defs = {}, {
-    rbacl = defaults(
+    rbacl = _.defaults(
       // clone deep to avoid tampering source objects
-      cloneDeep(defs),
-      cloneDeep(roles)
+      _.cloneDeep(defs),
+      _.cloneDeep(roles)
     )
   } = {}) {
     const add = newRoles => lonamic(
-      assign({}, roles, newRoles), defs
+      _.assign({}, roles, newRoles), defs
     )
 
     // assign methods to lonamic
-    return assign(add, {
+    return _.assign(add, {
       valueOf () {
         return rbacl
       },
@@ -70,24 +68,23 @@ export function acl ({
 
   lonamic.of = rbacl => lonamic(
     undefined, undefined, {
-      rbacl: cloneDeep(rbacl)
+      rbacl: _.cloneDeep(rbacl)
     }
   )
 
   // sugar
   lonamic.hydrateOf = (rbacl, id) => lonamic(
     undefined, undefined, {
-      rbacl: cloneDeep(rbacl)
+      rbacl: _.cloneDeep(rbacl)
     }
   ).hydrate(id).res
 
   lonamic.default = (def = {}, rbacl = { roles: '', defaults: '' }) => lonamic(
     rbacl.roles,
-    assign({}, rbacl.defaults, def)
+    _.assign({}, rbacl.defaults, def)
   )
 
   return lonamic
 }
 
-const lonamic = acl()
-export default lonamic
+export const lonamic = acl()
