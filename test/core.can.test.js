@@ -2,7 +2,7 @@ const test = require('tape')
 
 const {
   lonamic
-} = require('./core')
+} = require('../src/core')
 
 const simpleRoles = {
   '1': {

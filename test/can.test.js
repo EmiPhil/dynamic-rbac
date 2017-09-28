@@ -1,7 +1,9 @@
 const test = require('tape')
 // const assign = require('lodash/assign')
 
-const can = require('./can')
+const {
+  can
+} = require('../src/can')
 
 test('can()', assert => {
   const msg = 'should return false'

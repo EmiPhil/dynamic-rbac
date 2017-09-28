@@ -1,14 +1,12 @@
 const test = require('tape')
-const util = require('util')
-// const assign = require('lodash/assign')
 
 const {
   lonamic
-} = require('./core')
+} = require('../src/core')
 
 const {
   hydrator
-} = require('./inheritance')
+} = require('../src/inheritance')
 
 test('hydrator()', assert => {
   const msg = 'should return an empty array'
@@ -198,7 +196,7 @@ test('hydrator(x).toString()', assert => {
 
   const rbac = lonamic(roles).roles
   const actual = hydrator(rbac, 'admin').toString()
-  const expected = `rbacl[admin] => ${util.inspect(hydrator(rbac, 'admin').res)}`
+  const expected = `rbacl[admin] => {"incl":["admin","manager"],"can":[1,2,3,4,5,6]}`
 
   assert.same(actual, expected, msg)
   assert.end()

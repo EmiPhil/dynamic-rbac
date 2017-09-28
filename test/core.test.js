@@ -3,7 +3,7 @@ const assign = require('lodash/assign')
 
 const {
   lonamic
-} = require('./core')
+} = require('../src/core')
 
 test('rbac(role)', assert => {
   const msg = 'should return .valueOf() with the new role'
