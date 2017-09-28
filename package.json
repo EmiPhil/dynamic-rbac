@@ -9,18 +9,24 @@
   "scripts": {
     "clean": "rimraf lib dist es coverage",
     "build": "cross-env NODE_ENV=build rollup -c",
-    "cov": "nyc report --reporter=lcov",
+    "cov": "nyc report --reporter=lcov && echo 'Cov complete.'",
     "lint": "eslint src && echo 'Lint complete.'",
-    "test": "cross-env NODE_ENV=test nyc tape -r babel-register -r babel-polyfill test/index.test.js",
-    "watch": "watch 'clear && npm run -s test && npm run lint' src",
+    "test": "cross-env NODE_ENV=test nyc tape 'test/**/*.test.js'",
+    "watch": "watch 'clear && npm run -s test && npm run cov && npm run lint' src test",
     "verify": "npm run -s test && npm run -s lint",
     "prepare": "npm run clean && npm run lint && npm test && npm run build",
     "precommit": "npm run verify"
   },
   "nyc": {
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
     "include": [
       "src/**"
-    ]
+    ],
+    "sourceMap": "inline",
+    "instrument": false
   },
   "repository": {
     "type": "git",
@@ -51,6 +57,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "1.6.0",
     "babel-register": "^6.26.0",
+    "babel-tape-runner": "^2.0.1",
     "cross-env": "5.0.5",
     "eslint": "4.5.0",
     "eslint-config-standard": "10.2.1",

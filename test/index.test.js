@@ -1,14 +1,12 @@
-require('babel-register')
-require('babel-polyfill')
-
 // Core Tests
-require('./core.test')
-require('./inheritance.test')
-require('./core.hydrate.test')
-require('./can.test')
-require('./core.can.test')
-require('./filter.test')
-require('./core.filter.test')
+import './core.test'
+import './inheritance.test'
+import './core.hydrate.test'
+import './can.test'
+import './can.assignPerms.test'
+import './core.can.test'
+import './filter.test'
+import './core.filter.test'
 
 // Practical Tests
-require('./examples/index.test')
+import './examples/index.test'
