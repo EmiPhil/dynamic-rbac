@@ -1,9 +1,5 @@
-const test = require('tape')
-
-const {
-  assignPerm,
-  assignPerms
-} = require('../src/can')
+import test from 'ava'
+import { assignPerm, assignPerms } from '../src/can'
 
 const perms = [
   'post:read',
@@ -13,7 +9,7 @@ const perms = [
   }
 ]
 
-test('assignPerms(perms)', assert => {
+test('assignPerms(perms)', t => {
   const msg = 'should assign perm array to object'
 
   const actual = assignPerms(perms)
@@ -22,43 +18,38 @@ test('assignPerms(perms)', assert => {
     'post:edit': perms[1].when
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('assignPerms(1)', assert => {
+test('assignPerms(1)', t => {
   const msg = 'should return {}'
 
   const actual = assignPerms(1)
   const expected = {}
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('assignPerm(string)', assert => {
+test('assignPerm(string)', t => {
   const msg = 'should assign perm string to an object'
 
   const actual = assignPerm({}, perms[0])
   const expected = { 'post:read': 1 }
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('assignPerm(object)', assert => {
+test('assignPerm(object)', t => {
   const msg = 'should assign perm object to an object'
 
   const actual = assignPerm({}, perms[1])
   const expected = { 'post:edit': perms[1].when }
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('assignPerm(1)', assert => {
+test('assignPerm(1)', t => {
   const msg = 'should return empty object'
 
   const actual = assignPerm(1)
   const expected = {}
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

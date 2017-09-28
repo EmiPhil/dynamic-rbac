@@ -1,11 +1,8 @@
-const test = require('tape')
-const assign = require('lodash/assign')
+import test from 'ava'
+import _ from 'lodash'
+import { lonamic } from '../src/core'
 
-const {
-  lonamic
-} = require('../src/core')
-
-test('rbac(role)', assert => {
+test('rbac(role)', t => {
   const msg = 'should return .valueOf() with the new role'
   const role = {
     admin: {
@@ -16,11 +13,10 @@ test('rbac(role)', assert => {
   const actual = lonamic(role).valueOf()
   const expected = role
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x)(y)', assert => {
+test('rbac(x)(y)', t => {
   const msg = 'should allow adding multiple roles'
   const roles = [{
     admin: {
@@ -33,13 +29,12 @@ test('rbac(x)(y)', assert => {
   }]
 
   const actual = lonamic(roles[0])(roles[1]).valueOf()
-  const expected = assign({}, ...roles)
+  const expected = _.assign({}, ...roles)
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x)(x)', assert => {
+test('rbac(x)(x)', t => {
   const msg = 'should overwrite role of same id'
   const roles = [{
     admin: {
@@ -52,13 +47,12 @@ test('rbac(x)(x)', assert => {
   }]
 
   const actual = lonamic(roles[0])(roles[1]).valueOf()
-  const expected = assign({}, ...roles)
+  const expected = _.assign({}, ...roles)
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x).roles', assert => {
+test('rbac(x).roles', t => {
   const msg = 'should return roles'
   const role = {
     admin: {
@@ -69,19 +63,17 @@ test('rbac(x).roles', assert => {
   const actual = lonamic(role).roles
   const expected = role
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac.default()', assert => {
-  const msg = 'should return empty array'
+test('rbac.default()', t => {
+  const msg = 'should return empty object'
   const actual = lonamic.default().valueOf()
-  const expected = []
-  assert.same(actual, expected, msg)
-  assert.end()
+  const expected = {}
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac.default(x)(x)', assert => {
+test('rbac.default(x)(x)', t => {
   const msg = 'should not overwrite default role of same id'
   const roles = [{
     admin: {
@@ -96,11 +88,10 @@ test('rbac.default(x)(x)', assert => {
   const actual = lonamic.default(roles[0])(roles[1]).valueOf()
   const expected = roles[0]
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac.default(x).defaults', assert => {
+test('rbac.default(x).defaults', t => {
   const msg = 'should return default roles'
   const role = {
     admin: {
@@ -111,11 +102,10 @@ test('rbac.default(x).defaults', assert => {
   const actual = lonamic.default(role).defaults
   const expected = role
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac.default(x)(y).defaults', assert => {
+test('rbac.default(x)(y).defaults', t => {
   const msg = 'should only return default roles'
   const roles = [{
     admin: {
@@ -130,11 +120,10 @@ test('rbac.default(x)(y).defaults', assert => {
   const actual = lonamic.default(roles[0])(roles[1]).defaults
   const expected = roles[0]
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac.default(x)(y).roles', assert => {
+test('rbac.default(x)(y).roles', t => {
   const msg = 'should return all roles'
   const roles = [{
     admin: {
@@ -147,13 +136,12 @@ test('rbac.default(x)(y).roles', assert => {
   }]
 
   const actual = lonamic.default(roles[0])(roles[1]).roles
-  const expected = assign({}, ...roles)
+  const expected = _.assign({}, ...roles)
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x).add(y)', assert => {
+test('rbac(x).add(y)', t => {
   const msg = 'should be === to rbac(x)(y)'
   const roles = [{
     admin: {
@@ -168,11 +156,10 @@ test('rbac(x).add(y)', assert => {
   const actual = lonamic(roles[0]).add(roles[1]).roles
   const expected = lonamic(roles[0])(roles[1]).roles
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x)(0)(false)(null)(undefined)', assert => {
+test('rbac(x)(0)(false)(null)(undefined)', t => {
   const msg = 'should ignore adding falsy values'
   const role = {
     admin: { can: [1, 2, 3] }
@@ -181,11 +168,10 @@ test('rbac(x)(0)(false)(null)(undefined)', assert => {
   const actual = lonamic(role)(0)(false)(null)(undefined).roles
   const expected = role
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x)(1)(true)("")', assert => {
+test('rbac(x)(1)(true)("")', t => {
   const msg = 'should ignore adding invalid input values'
   const role = {
     admin: { can: [1, 2, 3] }
@@ -194,11 +180,10 @@ test('rbac(x)(1)(true)("")', assert => {
   const actual = lonamic(role)(1)(true)('').roles
   const expected = role
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(x).role(x.x)', assert => {
+test('rbac(x).role(x.x)', t => {
   const msg = 'should retrieve role id x'
   const roles = {
     admin: {
@@ -211,6 +196,5 @@ test('rbac(x).role(x.x)', assert => {
   const actual = lonamic(roles).role('admin')
   const expected = roles.admin
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

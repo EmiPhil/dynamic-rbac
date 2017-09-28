@@ -1,13 +1,6 @@
-const test = require('tape')
-
-const {
-  lonamic
-} = require('../src/core')
-
-const {
-  filter,
-  filterRequests
-} = require('../src/filter')
+import test from 'ava'
+import { lonamic } from '../src/core'
+import { filter, filterRequests } from '../src/filter'
 
 const roles = {
   '1': {
@@ -51,34 +44,45 @@ const roles = {
 
 const acl = lonamic(roles)
 
-test('filter()', assert => {
+test('filter()', async t => {
   const msg = 'should return empty array'
-  const actual = filter()
+  const actual = await filter()
   const expected = []
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('filter(x)', async assert => {
+test('filter(x)', async t => {
   const msg = 'should filter array'
   const params = { id: '1', acl }
   const reqs = ['a', 'b']
   const expected = ['a']
-
-  filter(params, reqs, (err, res) => {
-    if (err) res = err
-    assert.same(res, expected, 'cb: ' + msg)
-  })
-  filter(params, reqs).then(res => {
-    assert.same(res, expected, 'promise: ' + msg)
-  })
   const actual = await filter(params, reqs)
-  assert.same(actual, expected, 'async: ' + msg)
-
-  assert.end()
+  t.deepEqual(actual, expected, 'async: ' + msg)
 })
 
-test('filter(x) with sync can', async assert => {
+test('promise filter(x)', t => {
+  const msg = 'should filter array'
+  const params = { id: '1', acl }
+  const reqs = ['a', 'b']
+  const expected = ['a']
+  return filter(params, reqs).then(res => {
+    t.deepEqual(res, expected, 'promise: ' + msg)
+  })
+})
+
+test.cb('cb filter(x)', t => {
+  const msg = 'should filter array'
+  const params = { id: '1', acl }
+  const reqs = ['a', 'b']
+  const expected = ['a']
+  filter(params, reqs, (err, res) => {
+    if (err) res = err
+    t.deepEqual(res, expected, 'cb: ' + msg)
+    t.end()
+  })
+})
+
+test('filter(x) with sync can', async t => {
   const msg = 'should filter array'
   const params = { id: '3', acl }
   const reqs = ['a', 'b', {
@@ -93,21 +97,53 @@ test('filter(x) with sync can', async assert => {
       userRole: '1'
     }]
   }]
-
-  filter(params, reqs, (err, res) => {
-    if (err) res = err
-    assert.same(res, expected, 'cb: ' + msg)
-  })
-  filter(params, reqs).then(res => {
-    assert.same(res, expected, 'promise: ' + msg)
-  })
   const actual = await filter(params, reqs)
-  assert.same(actual, expected, 'async: ' + msg)
-
-  assert.end()
+  t.deepEqual(actual, expected, 'async: ' + msg)
 })
 
-test('filter(x) with sync can', async assert => {
+test('promise filter(x) with sync can', t => {
+  const msg = 'should filter array'
+  const params = { id: '3', acl }
+  const reqs = ['a', 'b', {
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  const expected = [{
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  return filter(params, reqs).then(res => {
+    t.deepEqual(res, expected, 'promise: ' + msg)
+  })
+})
+
+test.cb('cb filter(x) with sync can', t => {
+  const msg = 'should filter array'
+  const params = { id: '3', acl }
+  const reqs = ['a', 'b', {
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  const expected = [{
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  filter(params, reqs, (err, res) => {
+    if (err) res = err
+    t.deepEqual(res, expected, 'cb: ' + msg)
+    t.end()
+  })
+})
+
+test('filter(x) with sync can', async t => {
   const msg = 'should filter array with inheritance'
   const params = { id: '4', acl }
   const reqs = ['a', 'b', {
@@ -122,21 +158,53 @@ test('filter(x) with sync can', async assert => {
     }]
   }]
   const expected = reqs
-
-  filter(params, reqs, (err, res) => {
-    if (err) res = err
-    assert.same(res, expected, 'cb: ' + msg)
-  })
-  filter(params, reqs).then(res => {
-    assert.same(res, expected, 'promise: ' + msg)
-  })
   const actual = await filter(params, reqs)
-  assert.same(actual, expected, 'async: ' + msg)
-
-  assert.end()
+  t.deepEqual(actual, expected, 'async: ' + msg)
 })
 
-test('filter(x) with sync can and own keys', async assert => {
+test('promise filter(x) with sync can', t => {
+  const msg = 'should filter array with inheritance'
+  const params = { id: '4', acl }
+  const reqs = ['a', 'b', {
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }, {
+    name: 'd',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  const expected = reqs
+  return filter(params, reqs).then(res => {
+    t.deepEqual(res, expected, 'promise: ' + msg)
+  })
+})
+
+test.cb('cb filter(x) with sync can', t => {
+  const msg = 'should filter array with inheritance'
+  const params = { id: '4', acl }
+  const reqs = ['a', 'b', {
+    name: 'c',
+    rest: [{
+      userRole: '1'
+    }]
+  }, {
+    name: 'd',
+    rest: [{
+      userRole: '1'
+    }]
+  }]
+  const expected = reqs
+  filter(params, reqs, (err, res) => {
+    if (err) res = err
+    t.deepEqual(res, expected, 'cb: ' + msg)
+    t.end()
+  })
+})
+
+test('filter(x) with sync can and own keys', async t => {
   const msg = 'should filter array'
   const params = { id: '3', acl }
   const reqs = ['a', 'b', {
@@ -155,21 +223,93 @@ test('filter(x) with sync can and own keys', async assert => {
       userRole: '1'
     }]
   }]
-
-  filter(params, reqs, (err, res) => {
-    if (err) res = err
-    assert.same(res, expected, 'cb: ' + msg)
-  }, keys)
-  filter(params, reqs, keys).then(res => {
-    assert.same(res, expected, 'promise: ' + msg)
-  })
   const actual = await filter(params, reqs, keys)
-  assert.same(actual, expected, 'async: ' + msg)
-
-  assert.end()
+  t.deepEqual(actual, expected, 'async: ' + msg)
 })
 
-test('filter(x) returns errs', async assert => {
+test('promise filter(x) with sync can and own keys', t => {
+  const msg = 'should filter array'
+  const params = { id: '3', acl }
+  const reqs = ['a', 'b', {
+    target: 'c',
+    args: [{
+      userRole: '1'
+    }]
+  }]
+  const keys = {
+    name: 'target',
+    rest: 'args'
+  }
+  const expected = [{
+    target: 'c',
+    args: [{
+      userRole: '1'
+    }]
+  }]
+  return filter(params, reqs, keys).then(res => {
+    t.deepEqual(res, expected, 'promise: ' + msg)
+  })
+})
+
+test.cb('cb filter(x) with sync can and own keys', t => {
+  const msg = 'should filter array'
+  const params = { id: '3', acl }
+  const reqs = ['a', 'b', {
+    target: 'c',
+    args: [{
+      userRole: '1'
+    }]
+  }]
+  const keys = {
+    name: 'target',
+    rest: 'args'
+  }
+  const expected = [{
+    target: 'c',
+    args: [{
+      userRole: '1'
+    }]
+  }]
+  filter(params, reqs, (err, res) => {
+    if (err) res = err
+    t.deepEqual(res, expected, 'cb: ' + msg)
+    t.end()
+  }, keys)
+})
+
+test('filter(x) returns errs', async t => {
+  const msg = 'should filter array'
+  const params = { id: '5', acl }
+  const reqs = [{
+    name: 'e',
+    rest: [{
+      err: 'Failed!'
+    }]
+  }]
+  const expected = 'Failed!'
+  try {
+    await filter(params, reqs)
+  } catch (err) {
+    t.deepEqual(err, expected, 'async: ' + msg)
+  }
+})
+
+test('promise filter(x) returns errs', t => {
+  const msg = 'should filter array'
+  const params = { id: '5', acl }
+  const reqs = [{
+    name: 'e',
+    rest: [{
+      err: 'Failed!'
+    }]
+  }]
+  const expected = 'Failed!'
+  return filter(params, reqs).catch(err => {
+    t.deepEqual(err, expected, 'promise: ' + msg)
+  })
+})
+
+test.cb('cb filter(x) returns errs', t => {
   const msg = 'should filter array'
   const params = { id: '5', acl }
   const reqs = [{
@@ -182,34 +322,22 @@ test('filter(x) returns errs', async assert => {
 
   filter(params, reqs, (err, res) => {
     if (err) res = err
-    assert.same(res, expected, 'cb: ' + msg)
+    t.deepEqual(res, expected, 'cb: ' + msg)
+    t.end()
   })
-
-  filter(params, reqs).catch(err => {
-    assert.same(err, expected, 'promise: ' + msg)
-  })
-
-  try {
-    await filter(params, reqs)
-  } catch (err) {
-    assert.same(err, expected, 'async: ' + msg)
-  }
-
-  assert.end()
 })
 
 // filterRequests is tested by filter, but we
 // can do some basic tests here as well
 
-test('filterRequests()', assert => {
+test('filterRequests()', async t => {
   const msg = 'should return empty array'
-  const actual = filterRequests()
+  const actual = await filterRequests()
   const expected = []
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('filterRequests(...args)', async assert => {
+test('filterRequests(...args)', async t => {
   const msg = 'should return filtered reqs'
   const actual = await filterRequests({
     id: '1',
@@ -218,11 +346,10 @@ test('filterRequests(...args)', async assert => {
     acl
   })
   const expected = ['a']
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('filterRequests(...args)', async assert => {
+test('filterRequests(...args)', async t => {
   const msg = 'should return filtered reqs'
   const actual = await filterRequests({
     id: '1',
@@ -231,6 +358,5 @@ test('filterRequests(...args)', async assert => {
     acl
   })
   const expected = []
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

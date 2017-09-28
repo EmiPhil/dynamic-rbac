@@ -1,9 +1,11 @@
 {
   "env": {
-    "test": {
-      "plugins": ["istanbul"],
+    "development": {
       "presets": [
         "env"
+      ],
+      "plugins": [
+        "istanbul"
       ]
     },
     "build": {
