@@ -1,40 +1,36 @@
-const test = require('tape')
-const _ = require('lodash')
+import test from 'ava'
+import _ from 'lodash'
+import { lonamic } from '../../../src/core'
+import { posts, users, roles } from './data'
 
 const uniqBy = arr => _.uniqBy(arr, item => item.name || item)
 
-const {
-  lonamic
-} = require('../../../src/core')
-const { posts, users, roles } = require('./data')
-
-test('test data should load', assert => {
-  assert.same(
+test('test data should load', t => {
+  t.plan(3)
+  t.deepEqual(
     Object.keys(posts).length, 100,
     'should be 100 posts'
   )
-  assert.same(
+  t.deepEqual(
     Object.keys(users).length, 6,
     'should be 6 users'
   )
-  assert.same(
+  t.deepEqual(
     Object.keys(roles).length, 3,
     'should be 3 posts'
   )
-  assert.end()
 })
 
-test('lonamic(roles)', assert => {
+test('lonamic(roles)', t => {
   const msg = 'roles should load into lonamic'
 
   const actual = lonamic(roles).roles
   const expected = roles
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.hydrate(user.role)', assert => {
+test('lonamic.hydrate(user.role)', t => {
   const msg = 'lonamic should hydrate role'
 
   const user = users['00002']
@@ -44,11 +40,10 @@ test('lonamic.hydrate(user.role)', assert => {
     can: uniqBy(roles['Editor'].can.concat(roles['Journalist'].can))
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.can(Journalist, edit:all)', async assert => {
+test('lonamic.can(Journalist, edit:all)', async t => {
   const msg = 'predicate should return true only for own posts'
   const user = users['00003']
   const actual = _.compact(
@@ -63,11 +58,10 @@ test('lonamic.can(Journalist, edit:all)', async assert => {
   ).length
   const expected = 100 / 4
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.can(Editor, edit:all)', async assert => {
+test('lonamic.can(Editor, edit:all)', async t => {
   const msg = 'predicate should return true for all posts'
 
   const user = users['00002']
@@ -82,11 +76,10 @@ test('lonamic.can(Editor, edit:all)', async assert => {
   ).length
   const expected = 100
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.can(Journalist, edit:own)', async assert => {
+test('lonamic.can(Journalist, edit:own)', async t => {
   const msg = 'predicate should return true'
 
   const user = users['00004']
@@ -96,11 +89,10 @@ test('lonamic.can(Journalist, edit:own)', async assert => {
   })
   const expected = true
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.can(Journalist, edit:own)', async assert => {
+test('lonamic.can(Journalist, edit:own)', async t => {
   const msg = 'predicate should return false'
 
   const user = users['00004']
@@ -110,11 +102,10 @@ test('lonamic.can(Journalist, edit:own)', async assert => {
   })
   const expected = false
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic.filter(Journalist, posts)', async assert => {
+test('lonamic.filter(Journalist, posts)', async t => {
   const reqs = (userId) => _.range(100).map(id => ({
     name: 'post:edit',
     rest: [{
@@ -123,22 +114,23 @@ test('lonamic.filter(Journalist, posts)', async assert => {
     }]
   }))
 
+  t.plan(4)
+
   const acl = lonamic(roles)
   await Promise.all(
-    _.range(3, 6).map(async uid => {
+    _.range(3, 7).map(async uid => {
       const userId = '0000' + uid
       const user = users[userId]
       const canDo = await acl.filter(user.title, reqs(userId))
       const actual = canDo.map(req => req.rest[0].postId)
       const expected = _.range(uid - 3, 100, 4)
 
-      assert.same(actual, expected, `should filter editable posts (1 in 4 chance) - ${user.name} : ${userId}`)
+      t.deepEqual(actual, expected, `should filter editable posts (1 in 4 chance) - ${user.name} : ${userId}`)
     })
   )
-  assert.end()
 })
 
-test('lonamic.filter(Editor, posts)', async assert => {
+test('lonamic.filter(Editor, posts)', async t => {
   const msg = 'should filter editable posts (all)'
   const user = users['00002']
   const reqs = _.range(100).map(id => ({
@@ -153,6 +145,5 @@ test('lonamic.filter(Editor, posts)', async assert => {
   const actual = canDo.map(req => req.rest[0].postId)
   const expected = _.range(100)
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

@@ -9,18 +9,29 @@
   "scripts": {
     "clean": "rimraf lib dist es coverage",
     "build": "cross-env NODE_ENV=build rollup -c",
-    "cov": "nyc report --reporter=lcov",
+    "cov": "nyc report --reporter=lcov && echo 'Cov complete.'",
     "lint": "eslint src && echo 'Lint complete.'",
-    "test": "cross-env NODE_ENV=test nyc tape -r babel-register -r babel-polyfill test/index.test.js",
-    "watch": "watch 'clear && npm run -s test && npm run lint' src",
+    "test": "ava",
+    "test:cov": "nyc npm run test && npm run cov",
+    "test:suite": "npm run test:cov && npm run lint",
+    "watch": "watch 'clear && npm run test:suite' src test",
     "verify": "npm run -s test && npm run -s lint",
     "prepare": "npm run clean && npm run lint && npm test && npm run build",
     "precommit": "npm run verify"
   },
+  "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "concurrency": 20
+  },
   "nyc": {
-    "include": [
-      "src/**"
-    ]
+    "sourceMap": false,
+    "instrument": false
   },
   "repository": {
     "type": "git",
@@ -44,6 +55,7 @@
     "lodash": "4.17.4"
   },
   "devDependencies": {
+    "ava": "^0.22.0",
     "babel-core": "6.26.0",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-plugin-istanbul": "^4.1.5",
@@ -51,6 +63,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "1.6.0",
     "babel-register": "^6.26.0",
+    "babel-tape-runner": "^2.0.1",
     "cross-env": "5.0.5",
     "eslint": "4.5.0",
     "eslint-config-standard": "10.2.1",
