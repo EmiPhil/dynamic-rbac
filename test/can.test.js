@@ -1,15 +1,11 @@
-const test = require('tape')
-// const assign = require('lodash/assign')
+import test from 'ava'
+import { can } from '../src/can'
 
-const can = require('./can')
-
-test('can()', assert => {
+test('can()', async t => {
   const msg = 'should return false'
-  can().then(result => {
-    const expected = false
-    assert.same(result, expected, msg)
-    assert.end()
-  })
+  const actual = await can()
+  const expected = false
+  t.deepEqual(actual, expected, msg)
 })
 
 const roles = {
@@ -57,19 +53,18 @@ const roles = {
   }
 }
 
-test('can(x)', assert => {
+test('can(x)', t => {
   const msg = 'promise: predicate should return true'
-  can({
+  return can({
     role: roles[1],
     roleId: '1'
   }, 'a').then(result => {
     const expected = true
-    assert.same(result, expected, msg)
-    assert.end()
+    t.deepEqual(result, expected, msg)
   })
 })
 
-test('can(x)', assert => {
+test.cb('can(x)', t => {
   const msg = 'cb: predicate should return false'
   can({
     role: roles[1],
@@ -77,12 +72,12 @@ test('can(x)', assert => {
   }, 'b', (err, res) => {
     if (err) res = err
     const expected = false
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x)', async assert => {
+test('can(x)', async t => {
   const msg = 'async: predicate should return false'
 
   const actual = await can({
@@ -91,11 +86,10 @@ test('can(x)', async assert => {
   }, 'b')
   const expected = false
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('can(x) when', async assert => {
+test('can(x) when', async t => {
   const msg = 'async pattern: predicate should return false'
 
   const actual = await can({
@@ -104,11 +98,10 @@ test('can(x) when', async assert => {
   }, 'c')
   const expected = false
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('can(x) when', assert => {
+test.cb('can(x) when', t => {
   const msg = 'cb pattern: predicate should return true'
   can({
     role: roles[3],
@@ -118,24 +111,23 @@ test('can(x) when', assert => {
   }, (err, res) => {
     if (err) res = err
     const expected = true
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when', assert => {
+test('can(x) when', t => {
   const msg = 'promise pattern: predicate should return false'
-  can({
+  return can({
     role: roles[4],
     roleId: '3'
   }, 'd').then((result) => {
     const expected = false
-    assert.same(result, expected, msg)
-    assert.end()
+    t.deepEqual(result, expected, msg)
   })
 })
 
-test('can(x) when', async assert => {
+test('can(x) when', async t => {
   const msg = 'predicate should return true'
 
   const actual = await can({
@@ -144,11 +136,10 @@ test('can(x) when', async assert => {
   }, 'd')
   const expected = true
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return false'
 
   can({
@@ -159,12 +150,12 @@ test('can(x) when cb', assert => {
   }, (err, res) => {
     if (err) res = err
     const expected = false
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return true'
 
   can({
@@ -175,12 +166,12 @@ test('can(x) when cb', assert => {
   }, (err, res) => {
     if (err) res = err
     const expected = true
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return false'
 
   can({
@@ -191,12 +182,12 @@ test('can(x) when cb', assert => {
   }, (err, res) => {
     if (err) res = err
     const expected = false
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return true'
 
   can({
@@ -207,12 +198,12 @@ test('can(x) when cb', assert => {
   }, (err, res) => {
     if (err) res = err
     const expected = true
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return true'
   can({
     role: roles[1],
@@ -220,12 +211,12 @@ test('can(x) when cb', assert => {
   }, 'a', (err, res) => {
     if (err) res = err
     const expected = true
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) when cb', assert => {
+test.cb('can(x) when cb', t => {
   const msg = 'predicate should return false'
   can({
     role: roles[1],
@@ -233,12 +224,12 @@ test('can(x) when cb', assert => {
   }, 'b', (err, res) => {
     if (err) res = err
     const expected = false
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('can(x) fail', async assert => {
+test('can(x) fail', async t => {
   const msg = 'receives failure message'
   const expected = 'Failed!'
   can({
@@ -247,7 +238,7 @@ test('can(x) fail', async assert => {
   }, 'f', {
     fail: 'Failed!'
   }, (err) => {
-    assert.same(err, expected, 'cb: ' + msg)
+    t.deepEqual(err, expected, 'cb: ' + msg)
   })
 
   can({
@@ -256,7 +247,7 @@ test('can(x) fail', async assert => {
   }, 'f', {
     fail: 'Failed!'
   }).catch(err => {
-    assert.same(err, expected, 'promise: ' + msg)
+    t.deepEqual(err, expected, 'promise: ' + msg)
   })
   try {
     await can({
@@ -266,12 +257,11 @@ test('can(x) fail', async assert => {
       fail: 'Failed!'
     })
   } catch (err) {
-    assert.same(err, expected, 'async: ' + msg)
+    t.deepEqual(err, expected, 'async: ' + msg)
   }
-  assert.end()
 })
 
-test('can(x) fail', async assert => {
+test('can(x) fail', async t => {
   const msg = 'receives failure message'
   const expected = 'invalid input: .when is not a func'
   const role = {
@@ -283,20 +273,19 @@ test('can(x) fail', async assert => {
   can({
     role
   }, (err) => {
-    assert.same(err, expected, 'cb: ' + msg)
+    t.deepEqual(err, expected, 'cb: ' + msg)
   })
 
   can({
     role
   }).catch(err => {
-    assert.same(err, expected, 'promise: ' + msg)
+    t.deepEqual(err, expected, 'promise: ' + msg)
   })
   try {
     await can({
       role
     })
   } catch (err) {
-    assert.same(err, expected, 'async: ' + msg)
+    t.deepEqual(err, expected, 'async: ' + msg)
   }
-  assert.end()
 })

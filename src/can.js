@@ -1,32 +1,35 @@
-const assign = require('lodash/assign')
+import _ from 'lodash'
 
-function can ({
+export const assignPerm = (acc, perm) => {
+  // assign each perm to the an object depending on type
+  // if the perm is a func, we expect to receive a name and
+  // a .when method to handle checks
+  if (_.isString(perm)) {
+    return _.assign(acc, { [perm]: 1 })
+  } else if (_.isObject(perm)) {
+    return _.assign(acc, { [perm.name]: perm.when })
+  } else {
+    return {}
+  }
+}
+
+export const assignPerms = perms =>
+  _.reduce(perms, assignPerm, {})
+
+export function can ({
   role = {},
   roleId = ''
 } = {}, req = '', params = {}, next) {
-  let canDo = {}
   // assigns an empty array if role.can is undefined
-  role = assign({ can: [] }, role)
+  role = _.assign({ can: [] }, role)
   // support 3 arguments if no params
   if (typeof params === 'function') {
     next = params
     params = {}
   }
 
-  // assign perm to canDo based on typeof
-  const handler = {
-    'string': function (perm) {
-      canDo[perm] = 1
-    },
-    'object': function (perm) {
-      canDo[perm.name] = perm.when
-    }
-  }
-
-  // assign each perm to the canDo object depending on type
-  // if the perm is a func, we expect to receive a name and
-  // a .when method to handle checks
-  role.can.forEach(perm => handler[typeof perm](perm))
+  // assign perms to the canDo object
+  const canDo = assignPerms(role.can)
 
   // always return a promise
   // this will create a performance hit for async apps,
@@ -51,7 +54,7 @@ function can ({
           const result = await new Promise((resolve, reject) =>
             canDo[req]({
               // give reference params + user defined params
-              params: assign({ roleId, canDo }, params)
+              params: _.assign({ roleId, canDo }, params)
             }, function (err, res) { // simple cb to promise
               if (err) return reject(err)
               return resolve(res)
@@ -67,10 +70,11 @@ function can ({
         // .when is not a function
         return done('invalid input: .when is not a func')
       }
+    } else {
+      // canDo[req] does not exist, so access denied
+      return done(null, false)
     }
-    // canDo[req] does not exist, so access denied
-    return done(null, false)
   })
 }
 
-module.exports = can
+export default can

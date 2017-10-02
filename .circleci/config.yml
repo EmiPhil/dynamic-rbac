@@ -14,11 +14,8 @@ jobs:
           name: install-npm
           command: npm install
       - run:
-          name: test
-          command: npm test
-      - run:
-          name: code-coverage
-          command: npm run cov
+          name: test:suite
+          command: npm run test:suite
       - run:
           name: codecov
           command: bash <(curl -s https://codecov.io/bash)

@@ -1,9 +1,5 @@
-const test = require('tape')
-// const assign = require('lodash/assign')
-
-const {
-  lonamic
-} = require('./core')
+import test from 'ava'
+import { lonamic } from '../src/core'
 
 const simpleRoles = {
   '1': {
@@ -19,81 +15,75 @@ const simpleRoles = {
   }
 }
 
-test('lonamic(simpleRoles).filter()', async assert => {
+test('lonamic(simpleRoles).filter()', async t => {
   const msg = 'should return empty array'
   const actual = await lonamic(simpleRoles).filter()
   const expected = []
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', async assert => {
+test('async lonamic(simpleRoles).filter(id, reqs)', async t => {
   const msg = 'should return all reqs'
   const reqs = ['delete', 'write']
 
   const actual = await lonamic(simpleRoles).filter('2', reqs)
   const expected = reqs
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', assert => {
+test('promise lonamic(simpleRoles).filter(id, reqs)', t => {
   const msg = 'should return all reqs (promise)'
   const reqs = ['delete', 'write']
 
-  lonamic(simpleRoles).filter('2', reqs).then(res => {
+  return lonamic(simpleRoles).filter('2', reqs).then(res => {
     const actual = res
     const expected = reqs
-    assert.same(actual, expected, msg)
-    assert.end()
+    t.deepEqual(actual, expected, msg)
   })
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', assert => {
+test.cb('cb lonamic(simpleRoles).filter(id, reqs)', t => {
   const msg = 'should return all reqs (cb)'
   const reqs = ['delete', 'write']
 
   lonamic(simpleRoles).filter('2', reqs, (err, res) => {
     if (err) res = err
     const expected = reqs
-    assert.same(res, expected, msg)
-    assert.end()
+    t.deepEqual(res, expected, msg)
+    t.end()
   })
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', async assert => {
+test('async lonamic(simpleRoles).filter(id, reqs)', async t => {
   const msg = 'should only return write'
   const reqs = ['delete', 'write']
 
   const actual = await lonamic(simpleRoles).filter('1', reqs)
   const expected = ['write']
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', async assert => {
+test('lonamic(simpleRoles).filter(id, reqs)', async t => {
   const msg = 'should only return write and delete'
   const reqs = ['delete', 'write', 'publish']
 
   const actual = await lonamic(simpleRoles).filter('2', reqs)
   const expected = ['delete', 'write']
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic(simpleRoles).filter(id, reqs)', async assert => {
+test('lonamic(simpleRoles).filter(id, reqs)', async t => {
   const msg = 'should return all reqs'
   const reqs = ['delete', 'write', 'publish']
 
   const actual = await lonamic(simpleRoles).filter('3', reqs)
   const expected = ['delete', 'write', 'publish']
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
 const advancedRoles = {
@@ -126,7 +116,7 @@ const posts = {
   }
 }
 
-test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async assert => {
+test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async t => {
   const msg = 'should return edit and write'
   const reqs = [{
     name: 'edit',
@@ -140,11 +130,10 @@ test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async assert =
 
   const actual = await lonamic(advancedRoles).filter('2', reqs)
   const expected = reqs
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async assert => {
+test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async t => {
   const msg = 'should return write'
   const reqs = [{
     name: 'edit',
@@ -158,6 +147,5 @@ test('lonamic(advancedRoles).filter(id, reqs, { params }, next)', async assert =
 
   const actual = await lonamic(advancedRoles).filter('2', reqs)
   const expected = ['write']
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

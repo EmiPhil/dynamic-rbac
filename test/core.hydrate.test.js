@@ -1,15 +1,8 @@
-const test = require('tape')
-// const assign = require('lodash/assign')
+import test from 'ava'
+import { acl, lonamic } from '../src/core'
+import { inheritance } from '../src/inheritance'
 
-const {
-  acl, lonamic
-} = require('./core')
-
-const {
-  inheritance
-} = require('./inheritance')
-
-test('rbac(role).hydrate(x)', assert => {
+test('rbac(role).hydrate(x)', t => {
   const msg = 'should return the hydrated role'
   const roles = {
     admin: {
@@ -27,11 +20,10 @@ test('rbac(role).hydrate(x)', assert => {
     can: [1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('rbac(role).hydrator', assert => {
+test('rbac(role).hydrator', t => {
   const msg = 'should return the hydrator used to hydrate'
   const roles = {
     admin: {
@@ -46,11 +38,10 @@ test('rbac(role).hydrator', assert => {
   const actual = lonamic(roles).hydrator.toString()
   const expected = inheritance()(lonamic(roles)).toString()
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('acl({ hydrator: x })(role).hydrate(x)', assert => {
+test('acl({ hydrator: x })(role).hydrate(x)', t => {
   const msg = 'should support custom hydrators (1)'
   const roles = {
     admin: {
@@ -74,11 +65,10 @@ test('acl({ hydrator: x })(role).hydrate(x)', assert => {
     can: [1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('acl({ hydrator: x })(role).hydrate(x)', assert => {
+test('acl({ hydrator: x })(role).hydrate(x)', t => {
   const msg = 'should support custom hydrators (2)'
   const roles = {
     admin: {
@@ -103,6 +93,5 @@ test('acl({ hydrator: x })(role).hydrate(x)', assert => {
     admin: roles['admin']
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })

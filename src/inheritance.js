@@ -1,24 +1,18 @@
-const util = require('util')
-
-const assign = require('lodash/assign')
-const mergeWith = require('lodash/mergeWith')
-const pick = require('lodash/pick')
-const without = require('lodash/without')
-const uniqBy = require('lodash/uniqBy')
+import _ from 'lodash'
 
 // Used with mergeWith to concat arrays of same prop
 // See https://lodash.com/docs/4.17.4#mergeWith
 function customizer (obj, src) {
   if (Array.isArray(obj)) {
     // only use the first appearance of a role
-    return uniqBy(obj.concat(src), (item) => {
+    return _.uniqBy(obj.concat(src), (item) => {
       return item.name || item
     })
   }
 }
 
 // keyword is used as the prop to find the next targets in hydration
-const inheritance = ({ keyword = 'inherits' } = {}) => {
+export const inheritance = ({ keyword = 'inherits' } = {}) => {
   function hydrator (rbacl = {}, target = '', result = {
     incl: [],
     [keyword]: []
@@ -26,25 +20,25 @@ const inheritance = ({ keyword = 'inherits' } = {}) => {
     const replace = (target) => hydrator(rbacl, target)
 
     if (target) {
-      let res = mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
+      let res = _.mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
 
       const nextTarget = res[keyword].filter(role => !res.incl.includes(role))[0]
 
-      res = assign({}, res, {
-        [keyword]: without(res[keyword], nextTarget)
+      res = _.assign({}, res, {
+        [keyword]: _.without(res[keyword], nextTarget)
       })
 
       return hydrator(rbacl, nextTarget, res, cycles + 1, initTarget)
     } else {
-      result = pick(result, ['incl', 'can'])
+      result = _.pick(result, ['incl', 'can'])
 
-      return assign(replace, {
+      return _.assign(replace, {
         valueOf () {
           return result
         },
 
         toString () {
-          return `rbacl[${initTarget}] => ${util.inspect(result)}`
+          return `rbacl[${initTarget}] => ${JSON.stringify(result)}`
         },
 
         get res () {
@@ -74,8 +68,5 @@ const inheritance = ({ keyword = 'inherits' } = {}) => {
   return hydrator
 }
 
-const hydrator = inheritance()
-
-module.exports = {
-  inheritance, hydrator
-}
+export const hydrator = inheritance()
+export default hydrator

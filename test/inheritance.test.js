@@ -1,24 +1,15 @@
-const test = require('tape')
-const util = require('util')
-// const assign = require('lodash/assign')
+import test from 'ava'
+import { lonamic } from '../src/core'
+import { hydrator } from '../src/inheritance'
 
-const {
-  lonamic
-} = require('./core')
-
-const {
-  hydrator
-} = require('./inheritance')
-
-test('hydrator()', assert => {
+test('hydrator()', t => {
   const msg = 'should return an empty array'
   const actual = hydrator().valueOf()
   const expected = { incl: [] }
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x)', assert => {
+test('hydrator(x)', t => {
   const msg = 'should find all inheritance'
   const roles = [{
     admin: {
@@ -38,11 +29,10 @@ test('hydrator(x)', assert => {
     can: [1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x)', assert => {
+test('hydrator(x)', t => {
   const msg = 'should merge circular inheritance'
   const roles = {
     admin: {
@@ -62,11 +52,10 @@ test('hydrator(x)', assert => {
     can: [1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x)', assert => {
+test('hydrator(x)', t => {
   const msg = 'should not duplicate inheritance'
   const roles = {
     superAdmin: {
@@ -89,11 +78,10 @@ test('hydrator(x)', assert => {
     can: [0, 1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x).cycles', assert => {
+test('hydrator(x).cycles', t => {
   const msg = 'should not do redundant ops'
   const roles = {
     superAdmin: {
@@ -117,11 +105,10 @@ test('hydrator(x).cycles', assert => {
   const actual = hydrator(rbac)('superAdmin').cycles
   const expected = 4
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x).keyword', assert => {
+test('hydrator(x).keyword', t => {
   const msg = 'should return keyword used for inheritance searching'
   const roles = {
     admin: {
@@ -137,11 +124,10 @@ test('hydrator(x).keyword', assert => {
   const actual = hydrator(rbac)('admin').keyword
   const expected = 'inherits'
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x).res', assert => {
+test('hydrator(x).res', t => {
   const msg = 'should return result'
   const roles = {
     admin: {
@@ -160,11 +146,10 @@ test('hydrator(x).res', assert => {
     can: [1, 2, 3, 4, 5, 6]
   }
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x).target', assert => {
+test('hydrator(x).target', t => {
   const msg = 'should keep a reference to the initial target'
   const roles = {
     admin: {
@@ -180,11 +165,10 @@ test('hydrator(x).target', assert => {
   const actual = hydrator(rbac, 'admin').target
   const expected = 'admin'
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
 
-test('hydrator(x).toString()', assert => {
+test('hydrator(x).toString()', t => {
   const msg = 'should convert into a string'
   const roles = {
     admin: {
@@ -198,8 +182,7 @@ test('hydrator(x).toString()', assert => {
 
   const rbac = lonamic(roles).roles
   const actual = hydrator(rbac, 'admin').toString()
-  const expected = `rbacl[admin] => ${util.inspect(hydrator(rbac, 'admin').res)}`
+  const expected = `rbacl[admin] => {"incl":["admin","manager"],"can":[1,2,3,4,5,6]}`
 
-  assert.same(actual, expected, msg)
-  assert.end()
+  t.deepEqual(actual, expected, msg)
 })
