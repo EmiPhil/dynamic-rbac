@@ -1,0 +1,32 @@
+{
+  "env": {
+    "development": {
+      "presets": [
+        "env"
+      ],
+      "plugins": [
+        "istanbul"
+      ]
+    },
+    "build": {
+      "plugins": [
+        "lodash",
+        "external-helpers",
+        ["transform-runtime", {
+          "helpers": false,
+          "polyfill": false,
+          "regenerator": true,
+          "moduleName": "babel-runtime"
+        }]
+      ],
+      "presets": [
+        ["env", {
+          "targets": {
+            "browsers": ["last 2 versions", "safari >= 7"]
+          },
+        "modules": false
+        }]
+      ]
+    }
+  }
+}
