@@ -1,11 +1,15 @@
 {
   "name": "lonamic",
-  "version": "0.1.0",
+  "version": "0.5.1",
   "description": "Dynamic HRBACL",
   "main": "dist/lonamic.cjs.js",
   "module": "dist/lonamic.esm.js",
   "jsnext:main": "dist/lonamic.esm.js",
   "browser": "dist/lonamic.umd.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "clean": "rimraf lib dist es coverage",
     "build": "cross-env NODE_ENV=build rollup -c",
