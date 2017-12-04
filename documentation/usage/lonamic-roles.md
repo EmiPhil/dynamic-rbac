@@ -95,6 +95,15 @@ This will return only the default roles:
 console.log(lonamic.defaults) // { newRole: { can: [ 'ping' ] } }
 ```
 
+### Fetching A Specific Role
+
+Use the role method:
+
+```js
+lonamic = lonamic(roles)
+console.log(lonamic.role('user')) // { can: [ 'post:write' ], inherits: [ 'guest' ] }
+```
+
 ---
 
 | [Previous](/usage/creating-roles.md) | [Next](/usage/can-user-x-do-action-y.md) |
