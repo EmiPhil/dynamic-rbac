@@ -144,7 +144,7 @@ hasAuthority(guest.role, 'make_new_post') // false
 hasAuthority(guest.role, 'browse_posts') // true
 ```
 
-Looking good! Our next step is to consider what would happen if our application had hundreds of actions. Our current naming methodolgy is not scaleable \(was it make new post or make new posts?\). One method that can work well at scale is the `action:type` style:
+Looking good! Our next step is to consider what would happen if our application had hundreds of actions. Our current naming methodolgy is not scaleable \(was it make new post or make new posts?\). One method that can work well at scale is the `object:action` style:
 
 ```js
 const roles = {
