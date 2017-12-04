@@ -203,6 +203,9 @@ function hasAuthority (role, action) {
   }
 }
 
+const user = { role: 'user' }
+const guest = { role: 'guest' }
+
 hasAuthority(user.role, 'post:write') // true
 hasAuthority(user.role, 'post:read') // true
 

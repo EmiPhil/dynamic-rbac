@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [Basics](usage.md)
+* [Usage](usage.md)
   * [Creating Roles](usage/creating-roles.md)
   * [Lonamic Roles](usage/lonamic-roles.md)
 * [API](api.md)
