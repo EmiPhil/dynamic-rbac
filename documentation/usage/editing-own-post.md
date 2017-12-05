@@ -348,7 +348,7 @@ Another reminder that, if you do not agree with the default implementation of .c
 
 ---
 
-| [Previous](/usage/can-user-x-do-action-y.md) | [Next](/usage/filtering-objects.md) |
+| [Previous](/usage/can-user-x-do-action-y.md) | [Next](/usage/filtering-requests.md) |
 | :--- | ---: |
 
 
