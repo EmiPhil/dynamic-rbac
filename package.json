@@ -1,6 +1,6 @@
 {
   "name": "lonamic",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Dynamic HRBACL",
   "main": "dist/lonamic.cjs.js",
   "module": "dist/lonamic.esm.js",
