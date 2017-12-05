@@ -80,15 +80,15 @@ The inheritance pattern is so common that, by default, Lonamic will pre-hydrate 
 
 ### Next Steps
 
-So far we have finished 2 of the three challenges at the bottom of [Creating Roles](/usage/creating-roles.md). In the previous article, we discovered how to dynamically add roles to our acl \(lonamic returns lonamic on add!\). In this article, we have seen that, by default, calls to our internal lonamic functions return promises. This mindset allows us to bring in asynchronus calls to our system later, without having to refactor any code.
-
-
+So far we have finished 2 of the three challenges at the bottom of [Creating Roles](/usage/creating-roles.md). In the [previous article](/usage/lonamic-roles.md), we discovered how to dynamically add roles to our acl \(lonamic returns lonamic on add!\). In this article, we have seen that, by default, calls to our internal lonamic functions return promises. This mindset allows us to bring in asynchronus calls to our system later, without worrying about it now.
 
 Next, let's tackle post edits.
 
 ---
 
-|  |  |
-| :--- | :--- |
+| [Previous](/usage/lonamic-roles.md) | [Next](/usage/editing-own-post.md) |
+| :--- | ---: |
+
+
 
 
