@@ -1,8 +1,12 @@
 # Lonamic
 
-![](https://cdn.rawgit.com/standard/standard/master/badge.svg)
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
-[![](https://codecov.io/gh/EmiPhil/lonamic/branch/master/graph/badge.svg)](https://www.gitbook.com/book/emiphil/lonamic/edit#)[![](https://circleci.com/gh/EmiPhil/lonamic/tree/master.svg?style=svg) ](https://www.gitbook.com/book/emiphil/lonamic/edit#)
+
+[![codecov](https://codecov.io/gh/EmiPhil/lonamic/branch/master/graph/badge.svg)](https://codecov.io/gh/EmiPhil/lonamic)
+[![CircleCI](https://circleci.com/gh/EmiPhil/lonamic/tree/master.svg?style=svg)](https://circleci.com/gh/EmiPhil/lonamic/tree/master)
+
+
 
 Lonamic is a flexible and extendable core for implementing authorization patterns in Javascript applications.
 
