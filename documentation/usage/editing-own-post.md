@@ -165,7 +165,8 @@ const userRole = {
     'post:write',
     {
       name: 'post:edit',
-      when ({ db, postId, userId }, next) {
+      when ({ params }, next) {
+        const { db, postId, userId } = params
         getUserPost(db, postId, userId)
           .then(isAuthorised => next(null, isAuthorised))
       }
@@ -174,12 +175,172 @@ const userRole = {
   inherits: ['guest']
 }
 
+
 lonamic = lonamic({ user: userRole }) // remember that lonamic will overwrite previous roles of the same id
 ```
 
-When defining conditional cans, Lonamic expects an object with the name of the permission and a when function. The when function is passed a param object which we deconstruct above, and a next callback. Because Lonamic assumes async as default, you can create complicated io logic flows inside the when function. Simply call the next callback with \(err, boolean\) when you are ready!
+When defining conditional cans, Lonamic expects an object with the name of the permission and a when function. The when function is passed an object with one prop params, which contains some user-provided information, along with the role id and a canDo object of everything that role can do, and a next callback. Because Lonamic assumes async as default, you can create complicated io logic flows inside the when function. Simply call the next callback with \(err, boolean\) when you are ready!
 
 Now, inside the last then of the post creation:
+
+```js
+...
+.then(db => {
+  const [jane, bob, guest] = users
+  // Lets us track the async calls better
+  const log = (id) => (result) => console.log(`${id}: ${result}`)
+  //                                  These are the params passed to .when
+  lonamic.can(jane.role, 'post:edit', { db, postId: 0, userId: jane.id }).then(log('Jane 0')) // Jane 0: true
+  lonamic.can(jane.role, 'post:write').then(log('Jane 1')) // Jane 1: true
+  lonamic.can(jane.role, 'post:read').then(log('Jane 2')) // Jane 2: true
+  lonamic.can(jane.role, 'post:edit', { db, postId: 2, userId: jane.id }).then(log('Jane 3')) // Jane 3: false, that is Bob's post!
+
+  lonamic.can(bob.role, 'post:edit', { db, postId: 0, userId: bob.id }).then(log('Bob 0')) // Bob 0: false, that is Jane's post!
+  lonamic.can(bob.role, 'post:edit', { db, postId: 2, userId: bob.id }).then(log('Bob 1')) // Bob 1: true
+
+  lonamic.can(guest.role, 'post:read').then(log('Guest 0')) // Guest 0: true
+  lonamic.can(guest.role, 'post:write').then(log('Guest 1')) // Guest 1: false
+  lonamic.can(guest.role, 'post:edit', { db, postId: 1, userId: guest.id }).then(log('Guest 2')) // Guest 2: false
+  lonamic.can(guest.role, 'post:edit').then(log('Guest 3')) // Guest 3: false
+})
+```
+
+### All Together:
+
+```js
+const Lonamic = require('lonamic').lonamic
+
+function PostDatabase () {
+  function database (db) {
+    const add = (id = '1', details = {}) => {
+      // async to immitate real io
+      return new Promise(resolve => {
+        let entry = Object.assign({}, details, { id: id })
+        setTimeout(() => {
+          resolve(database(
+            Object.assign({}, db, { [id]: entry })
+          ))
+        }, 100)
+      })
+    }
+  
+    return Object.assign(add, {
+      add, // allows default call or explicit .add
+      // allows a quick read of the db
+      toString () { return db },
+      getPost (id) {
+        // async to immitate real io
+        return new Promise (resolve => {
+          setTimeout(() => {
+            resolve(db[id])
+          }, 100)
+        })
+      }
+    })
+  }
+
+  // helpers - curried for promise sugar power
+  const add = (id, details) => (db) => db.add(id, details)
+  const getPost = (id) => (db) => db.getPost(id)
+  const log = (db) => {
+    return new Promise (resolve => {
+      console.log(db.toString())
+      resolve(db)
+    })
+  }
+
+  // init via default func, helpers in methods
+  return Object.assign(database, { add, getPost, log })
+}
+
+const db = PostDatabase()
+
+function getUserPost (db, postId, userId) {
+  return new Promise((resolve) => {
+    db.getPost(postId).then(post => {
+      if (post.by === userId) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+  })
+}
+
+const roles = {
+  user: {
+    can: ['post:write'],
+    inherits: ['guest']
+  },
+  guest: {
+    can: ['post:read'],
+    inherits: []
+  }
+}
+
+let lonamic = Lonamic(roles)
+
+const users = [
+  {
+    id: 1,
+    name: 'Jane',
+    role: 'user'
+  }, {
+    id: 2,
+    name: 'Bob',
+    role: 'user'
+  }, {
+    id: 3,
+    name: undefined,
+    role: 'guest'
+  }
+]
+
+const userRole = {
+  can: [
+    'post:write',
+    {
+      name: 'post:edit',
+      when ({ params }, next) {
+        const { db, postId, userId } = params
+        getUserPost(db, postId, userId)
+          .then(isAuthorised => next(null, isAuthorised))
+      }
+    }
+  ],
+  inherits: ['guest']
+}
+
+// Reassign the user role!
+lonamic = lonamic({ user: userRole })
+
+// Create some posts and test permissions
+postId = 0
+db()()
+.then(db.add(postId++, { by: 1, title: 'Lonamic', body: 'Is the best.' }))
+.then(db.add(postId++, { by: 1, title: 'Jane', body: 'Loves Lonamic.' }))
+.then(db.add(postId++, { by: 2, title: 'Roles', body: 'Can be simple!' }))
+.then(db.add(postId++, { by: 2, title: 'Bob', body: 'Master of roles.' }))
+.then(db.log)
+.then(db => {
+  const [jane, bob, guest] = users
+  // Lets us track the async calls better
+  const log = (id) => (result) => console.log(`${id}: ${result}`)
+  //                                  These are the params passed to .when
+  lonamic.can(jane.role, 'post:edit', { db, postId: 0, userId: jane.id }).then(log('Jane 0')) // Jane 0: true
+  lonamic.can(jane.role, 'post:write').then(log('Jane 1')) // Jane 1: true
+  lonamic.can(jane.role, 'post:read').then(log('Jane 2')) // Jane 2: true
+  lonamic.can(jane.role, 'post:edit', { db, postId: 2, userId: jane.id }).then(log('Jane 3')) // Jane 3: false, that is Bob's post!
+
+  lonamic.can(bob.role, 'post:edit', { db, postId: 0, userId: bob.id }).then(log('Bob 0')) // Bob 0: false, that is Jane's post!
+  lonamic.can(bob.role, 'post:edit', { db, postId: 2, userId: bob.id }).then(log('Bob 1')) // Bob 1: true
+
+  lonamic.can(guest.role, 'post:read').then(log('Guest 0')) // Guest 0: true
+  lonamic.can(guest.role, 'post:write').then(log('Guest 1')) // Guest 1: false
+  lonamic.can(guest.role, 'post:edit', { db, postId: 1, userId: guest.id }).then(log('Guest 2')) // Guest 2: false
+  lonamic.can(guest.role, 'post:edit').then(log('Guest 3')) // Guest 3: false
+})
+```
 
 
 
