@@ -6,6 +6,7 @@
   * [Lonamic Roles](usage/lonamic-roles.md)
   * [Can User X Do Action Y?](usage/can-user-x-do-action-y.md)
   * [Editing Own Post](usage/editing-own-post.md)
+  * [Filtering Objects](usage/filtering-objects.md)
 * [API](api.md)
   * [core](api/core.md)
   * [can](api/can.md)

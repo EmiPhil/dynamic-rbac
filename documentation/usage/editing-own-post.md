@@ -223,7 +223,7 @@ function PostDatabase () {
         }, 100)
       })
     }
-  
+
     return Object.assign(add, {
       add, // allows default call or explicit .add
       // allows a quick read of the db
@@ -341,6 +341,16 @@ db()()
   lonamic.can(guest.role, 'post:edit').then(log('Guest 3')) // Guest 3: false
 })
 ```
+
+In the next article, we will take this example one step further and explore the last default feature of Lonamic, filter.
+
+Another reminder that, if you do not agree with the default implementation of .can, you can easily replace it with a more suitable specification!
+
+---
+
+| [Previous](/usage/can-user-x-do-action-y.md) | [Next](/usage/filtering-objects.md) |
+| :--- | ---: |
+
 
 
 
