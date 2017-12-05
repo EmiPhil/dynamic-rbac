@@ -122,7 +122,7 @@ db().add(1, { by: 1, title, body })
   .then(console.log) // { by: 1, title: 'Title', body: 'Text.', id: 1 }
 ```
 
-#### Create Some Posts
+### Create Some Posts
 
 Now that we understand how to interact with our database, let's make a few posts:
 
@@ -139,7 +139,7 @@ db()() // :)
 })
 ```
 
-#### Connecting Lonamic
+### Connecting Lonamic
 
 Now we have a collection of posts, each having a by property that references the user id that created the post. Next, let's create a function that, given the db, a post id, and a user id, returns a Promise which resolves to false if the user id does not match the post id, or  resolves the post if it does:
 
