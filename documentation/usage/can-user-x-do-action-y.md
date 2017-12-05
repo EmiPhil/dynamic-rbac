@@ -68,7 +68,7 @@ The important thing to note is that Lonamic does not return the answer directly.
 
 ### What About Inheritance?
 
-\_Ha! \_You are thinking. We still haven't remade that big ugly hydrate function from the first tutorial. Where do we put our hydrator in this Can function?
+We still haven't remade that big ugly hydrate function from the first tutorial. Where do we put our hydrator in this Can function?
 
 ```js
 lonamic.can(user.role, 'post:read').then(console.log) // true
@@ -77,6 +77,15 @@ lonamic.can(user.role, 'post:read').then(console.log) // true
 Whoa.
 
 The inheritance pattern is so common that, by default, Lonamic will pre-hydrate calls by calling lonamic.hydrate. Of course, just like the Can method, you can also pass in your own Hydrator!
+
+If you would like to directly hydrate a role:
+
+```js
+hydrated = lonamic.hydrate('user')
+console.log(hydrated.toString()) // rbacl[user] => {"incl":["user","guest"],"can":["post:write","post:read"]}
+console.log(hydrated.target) // user
+console.log(hydrated.res) // { incl: [ 'user', 'guest' ], can: [ 'post:write', 'post:read' ] }
+```
 
 ### Next Steps
 
