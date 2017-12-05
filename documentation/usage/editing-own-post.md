@@ -77,20 +77,21 @@ let lonamic = Lonamic(roles)
 And some users, this time with ids and a name property:
 
 ```js
-const users = {
-  1: {
+const users = [
+  {
+    id: 1,
     name: 'Jane',
     role: 'user'
-  },
-  2: {
+  }, {
+    id: 2,
     name: 'Bob',
     role: 'user'
-  },
-  3: {
+  }, {
+    id: 3,
     name: undefined,
     role: 'guest'
   }
-}
+]
 ```
 
 ##### Interacting With The Database
@@ -120,6 +121,65 @@ db().add(1, { by: 1, title, body })
   .then(db.getPost(1))
   .then(console.log) // { by: 1, title: 'Title', body: 'Text.', id: 1 }
 ```
+
+#### Create Some Posts
+
+Now that we understand how to interact with our database, let's make a few posts:
+
+```js
+let postId = 0
+db()() // :)
+.then(db.add(postId++, { by: 1, title: 'Lonamic', body: 'Is the best.' }))
+.then(db.add(postId++, { by: 1, title: 'Jane', body: 'Loves Lonamic.' }))
+.then(db.add(postId++, { by: 2, title: 'Roles', body: 'Can be simple!' }))
+.then(db.add(postId++, { by: 2, title: 'Bob', body: 'Master of roles.' }))
+.then(db.log)
+.then(db => {
+  // This is the current db!
+})
+```
+
+#### Connecting Lonamic
+
+Now we have a collection of posts, each having a by property that references the user id that created the post. Next, let's create a function that, given the db, a post id, and a user id, returns a Promise which resolves to false if the user id does not match the post id, or  resolves the post if it does:
+
+```js
+function getUserPost (db, postId, userId) {
+  return new Promise((resolve) => {
+    db.getPost(postId).then(post => {
+      if (post.by === userId) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+  })
+}
+```
+
+We are almost done. Next, lets remake our user role to support maybe authorisation:
+
+```js
+const userRole = {
+  can: [
+    'post:write',
+    {
+      name: 'post:edit',
+      when ({ db, postId, userId }, next) {
+        getUserPost(db, postId, userId)
+          .then(isAuthorised => next(null, isAuthorised))
+      }
+    }
+  ],
+  inherits: ['guest']
+}
+
+lonamic = lonamic({ user: userRole }) // remember that lonamic will overwrite previous roles of the same id
+```
+
+When defining conditional cans, Lonamic expects an object with the name of the permission and a when function. The when function is passed a param object which we deconstruct above, and a next callback. Because Lonamic assumes async as default, you can create complicated io logic flows inside the when function. Simply call the next callback with \(err, boolean\) when you are ready!
+
+Now, inside the last then of the post creation:
 
 
 
