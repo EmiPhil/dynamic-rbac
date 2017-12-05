@@ -1,7 +1,12 @@
 # Summary
 
 * [Introduction](README.md)
-* [Basics](usage.md)
+* [Usage](usage.md)
+  * [Creating Roles](usage/creating-roles.md)
+  * [Lonamic Roles](usage/lonamic-roles.md)
+  * [Can User X Do Action Y?](usage/can-user-x-do-action-y.md)
+  * [Editing Own Post](usage/editing-own-post.md)
+  * [Filtering Requests](usage/filtering-requests.md)
 * [API](api.md)
   * [core](api/core.md)
   * [can](api/can.md)
