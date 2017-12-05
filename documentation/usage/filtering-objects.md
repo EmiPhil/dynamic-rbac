@@ -21,7 +21,6 @@ lonamic.filter('guest', reqs).then(passed => {
   console.log('Guest can do: ' + passed.join(', '))
   // Guest can do: post:read
 })
-
 ```
 
 For requests that use the conditional can from the previous article, filter expects an object with a name and a rest array of arguments to pass to the when function. Using the rest array allows users to define their own Can method and still be able to use the default filter function, by passing in the required arguments to the rest property.
@@ -122,7 +121,7 @@ db(posts)()
         return params.db.getPost(params.postId)
       })
     ))
-    .then(console.log)
+    .then(console.log) // Jane's posts
 })
 ```
 
@@ -130,8 +129,8 @@ That's it! If you would like to know more, please read through the API documents
 
 ---
 
-| Previous | Next |
-| :--- | :--- |
+| [Previous](/usage/editing-own-post.md) | [Next](/api.md) |
+| :--- | ---: |
 
 
 
