@@ -2,7 +2,7 @@
 
 The .can method is the bread and butter of lonamic. By default, `can` **returns a promise.** This encourages developers to use the same coding style for all roles, and allows the developer to ignore whether some role is implemented with concurrency or not.
 
-Like everything in lonamic, `can` can be customized by passing in a .canHandler function into the acl constructor. (To see an example of this, look at the source of core.js. Internally, lonamic passes the `can` method to lonamic in the exact same way you would if you made a custom function.)
+Like everything in lonamic, `can` can be customized by passing in a .canHandler function into the acl constructor. (To see an example of this, look at the source of core.js. Internally, lonamic passes the `can` method to lonamic in the exact same way you would if you made a custom function.) Although customization is possible, lonamic should work for the majority of use cases out of the box.
 
 First, let's define a simple acl to show the functionality of `can`:
 
