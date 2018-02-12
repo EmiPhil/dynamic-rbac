@@ -103,12 +103,3 @@ Use the role method:
 lonamic = lonamic(roles)
 console.log(lonamic.role('user')) // { can: [ 'post:write' ], inherits: [ 'guest' ] }
 ```
-
----
-
-| [Previous](/usage/creating-roles.md) | [Next](/usage/can-user-x-do-action-y.md) |
-| :--- | ---: |
-
-
-
-
