@@ -124,7 +124,7 @@ test('rbac.default(x)(y).defaults', t => {
 })
 
 test('rbac.default(x)(y).roles', t => {
-  const msg = 'should return all roles'
+  const msg = 'should return all roles (no defaults)'
   const roles = [{
     admin: {
       can: [1, 2, 3]
