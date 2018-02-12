@@ -5,7 +5,7 @@ import { hydrator } from '../src/inheritance'
 test('hydrator()', t => {
   const msg = 'should return an empty array'
   const actual = hydrator().valueOf()
-  const expected = { incl: [] }
+  const expected = { incl: [], can: [] }
   t.deepEqual(actual, expected, msg)
 })
 

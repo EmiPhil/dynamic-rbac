@@ -32,6 +32,10 @@ export const inheritance = ({ keyword = 'inherits' } = {}) => {
     } else {
       result = _.pick(result, ['incl', 'can'])
 
+      if (!_.has(result, 'can')) {
+        result.can = []
+      }
+
       return _.assign(replace, {
         valueOf () {
           return result
