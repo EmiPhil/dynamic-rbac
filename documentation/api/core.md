@@ -96,7 +96,7 @@ Return the acl object, including both default and non default roles.
 
 `lonamic.roles`
 
-Getter prop that returns the roles acl object (no default roles)
+Equivalent to `valueOf`
 ### .defaults
 
 `lonamic.defaults`
@@ -140,6 +140,11 @@ Checks if role x can do action y. See the docs for [.can](/api/can.md).
 
 Filters a collection of actions based on a role. See the docs for [.filter](/api/filter.md).
 
+### .encode()
+
+`lonamic.encode()`
+
+Returns a buffer for db storage. Preserves default roles.
 
 ### .constructor
 
@@ -217,3 +222,9 @@ lonamic = lonamic({ 'role': { can: [''] } })
 // { role: { can: [ 'default' ] } }
 console.log(lonamic.valueOf())
 ```
+
+### .decode()
+
+`lonamic.decode(buffer)`
+
+Decodes a buffer created from `lonamic(roles = {}).encode()` and returns a lonamic instance.

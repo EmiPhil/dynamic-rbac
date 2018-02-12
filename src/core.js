@@ -7,12 +7,15 @@ import _ from 'lodash'
 import inheritance from './inheritance'
 import can from './can'
 import filter from './filter'
+import { encode, decode } from './encoder'
 
 // allow users to pass in options
 export function acl ({
   hydrator = inheritance,
   canHandler = can,
-  filterHandler = filter
+  filterHandler = filter,
+  encoder = encode,
+  decoder = decode
 } = {}) {
   function lonamic (roles = {}, defs = {}, {
     rbacl = _.defaults(
@@ -36,7 +39,7 @@ export function acl ({
       },
 
       get defaults () {
-        return defs
+        return _.cloneDeep(defs)
       },
 
       role (x) {
@@ -61,6 +64,10 @@ export function acl ({
         return filterHandler({ acl: currentACL, id }, ...rest)
       },
 
+      encode () {
+        return encoder(roles, defs)
+      },
+
       add,
       constructor: lonamic
     })
@@ -83,6 +90,8 @@ export function acl ({
     rbacl.roles,
     _.assign({}, rbacl.defaults, def)
   )
+
+  lonamic.decode = (buffer) => lonamic.default(undefined, decoder(buffer))
 
   return lonamic
 }
