@@ -345,12 +345,3 @@ db()()
 In the next article, we will take this example one step further and explore the last default feature of Lonamic, filter.
 
 Another reminder that, if you do not agree with the default implementation of .can, you can easily replace it with a more suitable specification!
-
----
-
-| [Previous](/usage/can-user-x-do-action-y.md) | [Next](/usage/filtering-requests.md) |
-| :--- | ---: |
-
-
-
-

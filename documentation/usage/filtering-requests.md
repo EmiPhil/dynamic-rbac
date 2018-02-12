@@ -126,12 +126,3 @@ db(posts)()
 ```
 
 That's it! If you would like to know more, please read through the API documents, or look through the test folder in github! Happy programming.
-
----
-
-| [Previous](/usage/editing-own-post.md) | [Next](/api.md) |
-| :--- | ---: |
-
-
-
-

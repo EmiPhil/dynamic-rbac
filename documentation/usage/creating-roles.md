@@ -222,12 +222,3 @@ If you are a die hard dev and want to work out some more use cases, here are a f
 * Only allowing users to post:edit their own posts
 * Adding more roles in a programmatic way \(for example, if you receive role definitions from a database\)
 * Making authorisation checks asynchronus
-
----
-
-| [Previous](/usage.md) | [Next](/usage/lonamic-roles.md) |
-| :--- | ---: |
-
-
-
-
