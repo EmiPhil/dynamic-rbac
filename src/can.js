@@ -1,17 +1,13 @@
 import _ from 'lodash'
 
-export const assignPerm = (acc, perm) => {
-  // assign each perm to the an object depending on type
-  // if the perm is a func, we expect to receive a name and
-  // a .when method to handle checks
-  if (_.isString(perm)) {
-    return _.assign(acc, { [perm]: 1 })
-  } else if (_.isObject(perm)) {
-    return _.assign(acc, { [perm.name]: perm.when })
-  } else {
-    return {}
-  }
-}
+// assign each perm to the an object depending on type
+// if the perm is a func, we expect to receive a name and
+// a .when method to handle checks
+export const assignPerm = (acc, perm) => _.isString(perm)
+  ? _.assign(acc, { [perm]: 1 })
+  : _.isObject(perm)
+    ? _.assign(acc, { [perm.name]: perm.when })
+    : {}
 
 export const assignPerms = perms =>
   _.reduce(perms, assignPerm, {})
@@ -23,7 +19,7 @@ export function can ({
   // assigns an empty array if role.can is undefined
   role = _.assign({ can: [] }, role)
   // support 3 arguments if no params
-  if (typeof params === 'function') {
+  if (_.isFunction(params)) {
     next = params
     params = {}
   }
@@ -47,7 +43,7 @@ export function can ({
       // if the req was not a function, we can quickly return
       if (canDo[req] === 1) {
         return done(null, true)
-      } else if (typeof canDo[req] === 'function') {
+      } else if (_.isFunction(canDo[req])) {
         // if the req is a function, try to call the .when method
         try {
           // pass Promise params into the .when for sync resolution
