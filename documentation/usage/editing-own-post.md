@@ -1,6 +1,6 @@
 # Editing Own Post
 
-To conceptualize the use case where we authorise a user to execute some action if, and only if, some other parameter returns in a specific way, you should think about an application where a user can edit their own content, but not others. This is a great use case because it is so common, and it shows that the construct
+To conceptualize the use case where we authorize a user to execute some action if, and only if, some other parameter returns in a specific way, you should think about an application where a user can edit their own content, but not others. This is a great use case because it is so common, and it shows that the construct
 
 ```js
 const editPostRole = {
@@ -8,7 +8,7 @@ const editPostRole = {
 }
 ```
 
-is not enough. Lonamic would read that and return true for _all_ posts! To behave how we want, we need to explicitly tell Lonamic when a user should be authorised to execute the action.
+is not enough. Lonamic would read that and return true for _all_ posts! To behave how we want, we need to explicitly tell Lonamic when a user should be authorized to execute the action.
 
 #### Post Database
 
@@ -157,7 +157,7 @@ function getUserPost (db, postId, userId) {
 }
 ```
 
-We are almost done. Next, lets remake our user role to support maybe authorisation:
+We are almost done. Next, lets remake our user role to support maybe authorization:
 
 ```js
 const userRole = {

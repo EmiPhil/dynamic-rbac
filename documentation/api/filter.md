@@ -1,6 +1,6 @@
 # .filter
 
-The .filter method is used on an array of actions to determine which actions a role has priviledges on. This is useful if, for example, you have a list of posts and want to filter out the ones that the user can edit.
+The .filter method is used on an array of actions to determine which actions a role has privileges on. This is useful if, for example, you have a list of posts and want to filter out the ones that the user can edit.
 
 First, let's define a simple acl to show the functionality of `filter`:
 

@@ -4,7 +4,7 @@ To show how lonamic helps you manage roles, lets start by building out a role sy
 
 ### Cycle 1
 
-Let's say that you are looking to bring autorisation into an application. In your application, there are two types of uses: privledged and guest. This is a common pattern in applications that are open for guests to browse and interact with content, but require a user to create an account to generate new content. \(Think of services like Reddit\).
+Let's say that you are looking to bring authorization into an application. In your application, there are two types of uses: privileged and guest. This is a common pattern in applications that are open for guests to browse and interact with content, but require a user to create an account to generate new content. \(Think of services like Reddit\).
 
 Perhaps you create a role object that looks something like this:
 
@@ -68,13 +68,13 @@ hasAuthority(guest.role, 'make_new_post') // false
 hasAuthority(guest.role, 'browse_posts') // true
 ```
 
-So far so good. Our application correctly discerns guests from users, and does not allow a guest to execute a post action. But notice that the `user` role is really a set of roles that contains the `guest` set and some priviledged set of roles:
+So far so good. Our application correctly discerns guests from users, and does not allow a guest to execute a post action. But notice that the `user` role is really a set of roles that contains the `guest` set and some privileged set of roles:
 
 ```js
 const userSet = [...guestSet, ...priviledgedSet]
 ```
 
-For our application, this is hardly noticable. But as we add to the list of things a `guest` can do, our application will  continuously violate DRY principles.
+For our application, this is hardly noticeable. But as we add to the list of things a `guest` can do, our application will  continuously violate DRY principles.
 
 ### Cycle 2
 
@@ -119,14 +119,14 @@ function hydrate (role) {
 }
 ```
 
-Don't worry if you do not follow the hydrate function completely. The important part is that given a role object, the hydrate function will find all of the actions the role, and any role it inherits, is authorised to perform, and return them as an array:
+Don't worry if you do not follow the hydrate function completely. The important part is that given a role object, the hydrate function will find all of the actions the role, and any role it inherits, is authorized to perform, and return them as an array:
 
 ```js
 hydrate(user.role)
 // ['make_new_post', 'browse_posts']
 ```
 
-To check for authorisation:
+To check for authorization:
 
 ```js
 function hasAuthority (role, action) {
@@ -144,7 +144,7 @@ hasAuthority(guest.role, 'make_new_post') // false
 hasAuthority(guest.role, 'browse_posts') // true
 ```
 
-Looking good! Our next step is to consider what would happen if our application had hundreds of actions. Our current naming methodolgy is not scaleable \(was it make new post or make new posts?\). One method that can work well at scale is the `object:action` style:
+Looking good! Our next step is to consider what would happen if our application had hundreds of actions. Our current naming methodology is not scalable \(was it make new post or make new posts?\). One method that can work well at scale is the `object:action` style:
 
 ```js
 const roles = {
@@ -221,4 +221,4 @@ If you are a die hard dev and want to work out some more use cases, here are a f
 
 * Only allowing users to post:edit their own posts
 * Adding more roles in a programmatic way \(for example, if you receive role definitions from a database\)
-* Making authorisation checks asynchronus
+* Making authorization checks asynchronous

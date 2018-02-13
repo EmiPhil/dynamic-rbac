@@ -1,6 +1,6 @@
 # .hydrate
 
-The .hydrate method is used to create an object of all priviledges a role has, including those it inherits, recursively. Internally, lonamic uses `hydrate` whenever the `can` or `filter` methods are used, so you would not typically need to execute hydration cycles yourself.
+The .hydrate method is used to create an object of all privileges a role has, including those it inherits, recursively. Internally, lonamic uses `hydrate` whenever the `can` or `filter` methods are used, so you would not typically need to execute hydration cycles yourself.
 
 First, let's define a simple acl to show the functionality of `hydrate`:
 
