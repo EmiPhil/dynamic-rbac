@@ -3,9 +3,9 @@ import _ from 'lodash'
 // Used with mergeWith to concat arrays of same prop
 // See https://lodash.com/docs/4.17.4#mergeWith
 function customizer (obj, src) {
-  if (Array.isArray(obj)) {
+  if (_.isArray(obj)) {
     // only use the first appearance of a role
-    return _.uniqBy(obj.concat(src), (item) => {
+    return _.uniqBy(_.concat(obj, src), (item) => {
       return item.name || item
     })
   }
@@ -22,12 +22,15 @@ export const inheritance = ({ keyword = 'inherits' } = {}) => {
     if (target) {
       let res = _.mergeWith({}, result, { incl: [target] }, rbacl[target], customizer)
 
-      const nextTarget = res[keyword].filter(role => !res.incl.includes(role))[0]
+      // do not rehydrate roles if they are already in our result object
+      const filterFinished = role => !_.includes(res.incl, role)
+      const nextTarget = _.filter(res[keyword], filterFinished)[0]
 
       res = _.assign({}, res, {
         [keyword]: _.without(res[keyword], nextTarget)
       })
 
+      // recursive
       return hydrator(rbacl, nextTarget, res, cycles + 1, initTarget)
     } else {
       result = _.pick(result, ['incl', 'can'])
