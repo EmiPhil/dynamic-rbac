@@ -1,11 +1,13 @@
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import babel from 'rollup-plugin-babel'
+import uglify from 'rollup-plugin-uglify'
 import pkg from './package.json'
 
 const babelConfig = {
   exclude: 'node_modules/**',
-  runtimeHelpers: true
+  runtimeHelpers: true,
+  externalHelpers: true
 }
 
 const config = [
@@ -13,14 +15,15 @@ const config = [
   {
     input: 'src/core.js',
     output: {
+      name: pkg.name,
       file: pkg.browser,
       format: 'umd'
     },
-    name: pkg.name,
     plugins: [
       resolve(),
       commonjs(),
-      babel(babelConfig)
+      babel(babelConfig),
+      uglify()
     ]
   },
   // CommonJS (for Node) and ES module (for bundlers) build.
@@ -32,6 +35,7 @@ const config = [
     input: 'src/core.js',
     external: id => {
       if (/lodash/.test(id)) return true
+      if (/buffer/.test(id)) return true
       if (/babel-runtime/.test(id)) return true
       return false
     },
@@ -40,7 +44,8 @@ const config = [
       { file: pkg.module, format: 'es' }
     ],
     plugins: [
-      babel(babelConfig)
+      babel(babelConfig),
+      uglify()
     ]
   }
 ]

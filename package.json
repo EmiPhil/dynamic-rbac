@@ -1,6 +1,6 @@
 {
   "name": "lonamic",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Dynamic HRBACL",
   "main": "dist/lonamic.cjs.js",
   "module": "dist/lonamic.esm.js",
@@ -13,9 +13,9 @@
   "scripts": {
     "clean": "rimraf lib dist es coverage",
     "build": "cross-env NODE_ENV=build rollup -c",
-    "cov": "nyc report --reporter=lcov && echo 'Cov complete.'",
+    "cov": "cross-env NODE_ENV=development nyc report --reporter=lcov && echo 'Cov complete.'",
     "lint": "eslint src && echo 'Lint complete.'",
-    "test": "ava",
+    "test": "cross-env NODE_ENV=development ava",
     "test:cov": "nyc npm run test && npm run cov",
     "test:suite": "npm run test:cov && npm run lint",
     "watch": "watch 'clear && npm run test:suite' src test",
@@ -30,11 +30,11 @@
     "files": [
       "test/**/*.test.js"
     ],
+    "concurrency": 20,
     "require": [
-      "babel-register",
-      "babel-polyfill"
+      "babel-register"
     ],
-    "concurrency": 20
+    "babel": "inherit"
   },
   "nyc": {
     "sourceMap": false,
@@ -60,32 +60,30 @@
   "homepage": "https://github.com/EmiPhil/lonamic#readme",
   "dependencies": {
     "buffer": "^5.0.8",
-    "lodash": "4.17.4"
+    "lodash": "4.17.5"
   },
   "devDependencies": {
-    "ava": "^0.22.0",
+    "ava": "^0.25.0",
     "babel-core": "6.26.0",
-    "babel-plugin-external-helpers": "6.22.0",
     "babel-plugin-istanbul": "^4.1.5",
-    "babel-plugin-lodash": "3.2.11",
+    "babel-plugin-lodash": "3.3.2",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "1.6.0",
+    "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "babel-runtime": "^6.26.0",
-    "cross-env": "5.0.5",
-    "eslint": "4.5.0",
-    "eslint-config-standard": "10.2.1",
-    "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-node": "5.1.1",
-    "eslint-plugin-promise": "3.5.0",
+    "cross-env": "5.1.3",
+    "eslint": "4.17.0",
+    "eslint-config-standard": "11.0.0-beta.0",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-node": "6.0.0",
+    "eslint-plugin-promise": "3.6.0",
     "eslint-plugin-standard": "3.0.1",
-    "nyc": "11.1.0",
-    "rimraf": "2.6.1",
-    "rollup": "0.49.2",
-    "rollup-plugin-babel": "3.0.2",
-    "rollup-plugin-commonjs": "8.2.1",
-    "rollup-plugin-node-resolve": "3.0.0",
+    "nyc": "11.4.1",
+    "rimraf": "2.6.2",
+    "rollup": "0.55.5",
+    "rollup-plugin-babel": "3.0.3",
+    "rollup-plugin-commonjs": "8.3.0",
+    "rollup-plugin-node-resolve": "3.0.2",
+    "rollup-plugin-uglify": "^3.0.0",
     "standard": "10.0.3",
     "watch": "1.0.2"
   }

@@ -1,15 +1,17 @@
-import { Buffer } from 'buffer/'
+import * as BufModule from 'buffer/'
 import _ from 'lodash'
+
+const Buf = BufModule.Buffer
 
 export const encode = (roles, defaults) => {
   const obj = {
     roles: _.assign({}, roles),
     defaults: _.assign({}, defaults)
   }
-  return Buffer.from(JSON.stringify(obj))
+  return Buf.from(JSON.stringify(obj))
 }
 
 export const decode = (buf) => {
-  const objString = Buffer.from(buf).toString()
+  const objString = Buf.from(buf).toString()
   return JSON.parse(objString)
 }
