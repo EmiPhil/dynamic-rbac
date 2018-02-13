@@ -1,27 +1,22 @@
-export function filterRequests ({
+import _ from 'lodash'
+
+const reduce = async (array, fn, acc) => {
+  for (const item of array) acc = await fn(acc, item)
+  return acc
+}
+
+export async function filterRequests ({
   id = '',
   reqs = [],
   keys = { name: '', rest: [] },
   acl = {}
 } = {}) {
-  return new Promise(async (resolve, reject) => {
-    let result = []
-    for (let i = 0; i < reqs.length; i++) {
-      let req = reqs[i]
-      let args = typeof req === 'string'
-        ? [req]
-        : [req[keys.name], ...req[keys.rest]]
-      try {
-        let check = await acl.can(id, ...args)
-        if (check) {
-          result = result.concat([req])
-        }
-      } catch (err) {
-        return reject(err)
-      }
-    }
-    return resolve(result)
-  })
+  try {
+    return await reduce(reqs, async (acc, req) => {
+      const args = _.isString(req) ? [req] : [req[keys.name], ...req[keys.rest]]
+      return await acl.can(id, ...args) ? _.concat(acc, req) : acc
+    }, [])
+  } catch (err) { throw err }
 }
 
 // id and acl will be passed in by lonamic
@@ -33,25 +28,23 @@ export function filterRequests ({
 export async function filter ({
   id = '',
   acl = {}
-} = {}, reqs = [], then, keys = {
+} = {}, reqs = [], cb, keys = {
   name: 'name',
   rest: 'rest'
 }) {
   // allow 3 args with no cb
-  if (typeof then === 'object') {
-    keys = then
-    then = undefined
+  if (_.isPlainObject(cb)) {
+    keys = cb
+    cb = undefined
   }
   // wait for filterRequests to loop through the .can of each req
   try {
     // req.can is sync!
-    const result = await filterRequests({
-      id, reqs, keys, acl
-    })
+    const result = await filterRequests({ id, reqs, keys, acl })
     // if cb return to cb
-    return then ? then(null, result) : result
+    return cb ? cb(null, result) : result
   } catch (err) {
-    if (then) { return then(err) }
+    if (cb) { return cb(err) }
     throw (err)
   }
 }
