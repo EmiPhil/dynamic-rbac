@@ -6,8 +6,7 @@ import pkg from './package.json'
 
 const babelConfig = {
   exclude: 'node_modules/**',
-  runtimeHelpers: true,
-  externalHelpers: true
+  plugins: ['external-helpers']
 }
 
 const config = [
@@ -20,7 +19,9 @@ const config = [
       format: 'umd'
     },
     plugins: [
-      resolve(),
+      resolve({
+        jsnext: true
+      }),
       commonjs(),
       babel(babelConfig),
       uglify()
@@ -36,7 +37,6 @@ const config = [
     external: id => {
       if (/lodash/.test(id)) return true
       if (/buffer/.test(id)) return true
-      if (/babel-runtime/.test(id)) return true
       return false
     },
     output: [

@@ -20,21 +20,18 @@
                 "safari >= 7"
               ]
             },
-            "modules": false
+            "exclude": [
+              "transform-async-to-generator",
+              "transform-regenerator"
+            ],
+            "modules": false,
+            "loose": true
           }
         ]
       ],
       "plugins": [
         "lodash",
-        [
-          "transform-runtime",
-          {
-            "helpers": true,
-            "polyfill": false,
-            "regenerator": true,
-            "moduleName": "babel-runtime"
-          }
-        ]
+        "transform-object-rest-spread"
       ]
     }
   }
