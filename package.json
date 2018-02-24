@@ -45,12 +45,14 @@
     "url": "git+https://github.com/EmiPhil/lonamic.git"
   },
   "keywords": [
+    "lonamic",
     "acl",
-    "rbac",
-    "hrbac",
+    "rbacl",
+    "hrbacl",
     "hrbacl",
     "roles",
-    "role"
+    "role",
+    "permissions"
   ],
   "author": "EmiPhil",
   "license": "MIT",
